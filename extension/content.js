@@ -1,3 +1,5 @@
+let newIssueUrl = "#";
+
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg === "url-updated" || msg === "page-refreshed") {
         const newIssueButton = document.querySelector('a.btn[href$="/issues/new"]')
@@ -6,18 +8,25 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             return;
         }
 
-        const newIssueUrl = newIssueButton.getAttribute("href");
+        newIssueUrl = newIssueButton.getAttribute("href");
         const subnav = newIssueButton.parentNode;
 
         subnav.removeChild(newIssueButton);
 
-        const advancedIssueButton = generateAdvancedIssueButton(newIssueUrl);
+        const advancedIssueButton = generateAdvancedIssueButton();
         subnav.innerHTML += advancedIssueButton;
+
+        chrome.storage.sync.get("label", function(data) {
+            // TODO: label을 배열로 받도록 처리. option.js과 함께 수정
+            const labels = [data.label];
+            const items = generateMenuItemsFromLabels(labels);
+            document.getElementById("select-menu-item-container").innerHTML = items;
+        });
     }
 });
 
 // TODO: Need to refactor
-function generateAdvancedIssueButton(newIssueUrl = "#") {
+function generateAdvancedIssueButton() {
     return `
         <div class="select-menu d-inline-block js-menu-container js-select-menu float-right">
             <div class="BtnGroup">
@@ -26,8 +35,8 @@ function generateAdvancedIssueButton(newIssueUrl = "#") {
             </div>
             <div class="select-menu-modal-holder">
                 <div class="select-menu-modal">
-                    <div class="select-menu-list js-navigation-container js-active-navigation-container">
-                        ${generateMenuItems(newIssueUrl)}
+                    <div id="select-menu-item-container" class="select-menu-list js-navigation-container js-active-navigation-container">
+                        Loading...
                     </div>
                 </div>
             </div>
@@ -35,9 +44,7 @@ function generateAdvancedIssueButton(newIssueUrl = "#") {
     `;
 }
 
-function generateMenuItems(newIssueUrl) {
-    // TODO: Fetch the labels of this repo
-    const labels = ["bug", "duplicate", "enhancement"];
+function generateMenuItemsFromLabels(labels) {
     let items = [];
 
     for (const label of labels) {
