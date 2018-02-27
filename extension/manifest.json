@@ -1,0 +1,31 @@
+{
+    "manifest_version": 2,
+    "name": "SmartGithub",
+    "version": "1.0",
+
+    "description": "Make your github repo smarter.",
+
+    "background": {
+        "scripts": [
+            "background.js"
+        ],
+        "persistent": false
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://github.com/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ],
+    "permissions": [
+        "tabs",
+        "webNavigation"
+    ],
+
+    "author": "yonggoo.noh@gmail.com",
+    "homepage_url": "https://github.com/ygnoh/smart-github"
+}
