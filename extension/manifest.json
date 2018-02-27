@@ -3,7 +3,6 @@
     "name": "SmartGithub",
     "version": "1.0",
 
-    "default_locale": "en",
     "description": "Make your github repo smarter.",
 
     "background": {
