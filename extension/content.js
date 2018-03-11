@@ -66,6 +66,7 @@ async function _getTemplateData() {
     const username = match[1];
     const reponame = match[2];
 
+    // https://developer.github.com/v3/repos/contents/
     const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATES`;
 
     let templateData;
