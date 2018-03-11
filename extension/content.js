@@ -11,13 +11,16 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 
         subnav.removeChild(newIssueButton);
 
-        const advancedIssueButton = generateAdvancedIssueButton(newIssueUrl);
+        const advancedIssueButton = _generateAdvancedIssueButton(newIssueUrl);
         subnav.innerHTML += advancedIssueButton;
+
+        _generateMenuItems(newIssueUrl).then(menuItems => {
+            document.getElementById("select-menu-item-container").innerHTML = menuItems;
+        });
     }
 });
 
-// TODO: Need to refactor
-function generateAdvancedIssueButton(newIssueUrl = "#") {
+function _generateAdvancedIssueButton(newIssueUrl = "#") {
     return `
         <div class="select-menu d-inline-block js-menu-container js-select-menu float-right">
             <div class="BtnGroup">
@@ -26,8 +29,8 @@ function generateAdvancedIssueButton(newIssueUrl = "#") {
             </div>
             <div class="select-menu-modal-holder">
                 <div class="select-menu-modal">
-                    <div class="select-menu-list js-navigation-container js-active-navigation-container">
-                        ${generateMenuItems(newIssueUrl)}
+                    <div id="select-menu-item-container" class="select-menu-list js-navigation-container js-active-navigation-container">
+                        Loading...
                     </div>
                 </div>
             </div>
@@ -35,17 +38,17 @@ function generateAdvancedIssueButton(newIssueUrl = "#") {
     `;
 }
 
-function generateMenuItems(newIssueUrl) {
-    // TODO: Fetch the labels of this repo
-    const labels = ["bug", "duplicate", "enhancement"];
-    let items = [];
+async function _generateMenuItems(newIssueUrl) {
+    const templateData = await _getTemplateData();
+    const items = [];
 
-    for (const label of labels) {
-        const href = newIssueUrl + "?template=" + label + ".md&labels=" + label;
+    for (const templateDatum of templateData) {
+        const tempName = _extractTemplateName(templateDatum);
+        const href = newIssueUrl + "?template=" + tempName + ".md&labels=" + tempName;
         const item = `
             <div class="select-menu-item js-navigation-item">
                 <div class="select-menu-item-text">
-                    <a href=${href} class="select-menu-item-heading">${label}</span>
+                    <a href=${href} class="select-menu-item-heading">${tempName}</span>
                 </div>
             </div>
         `;
@@ -53,4 +56,32 @@ function generateMenuItems(newIssueUrl) {
     }
 
     return items.join("");
+}
+
+async function _getTemplateData() {
+    const host = location.protocol + "//" +
+        (location.host === "github.com" ? "api.github.com" : (location.host + "/api/v3"));
+
+    const match = location.pathname.match(/([^\/]+)\/([^\/]+)/);
+    const username = match[1];
+    const reponame = match[2];
+
+    const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATES`;
+
+    let templateData;
+    await fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            templateData = data;
+        })
+        .catch(err => {
+            console.error(err);
+        });
+
+    return templateData;
+}
+
+function _extractTemplateName(templateDatum) {
+    const match = templateDatum.name.match(/(.*).md$/i);
+    return match[1];
 }
