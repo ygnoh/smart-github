@@ -11,16 +11,19 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 
         subnav.removeChild(newIssueButton);
 
-        const advancedIssueButton = _generateAdvancedIssueButton(newIssueUrl);
+        const advancedIssueButton = _createAdvancedIssueButton(newIssueUrl);
         subnav.innerHTML += advancedIssueButton;
 
-        _generateMenuItems(newIssueUrl).then(menuItems => {
-            document.getElementById("select-menu-item-container").innerHTML = menuItems;
+        _fetchTemplateData().then(data => {
+            data.newIssueUrl = newIssueUrl;
+
+            let menuContents = _createMenuContents(data);
+            document.getElementById("select-menu-item-container").innerHTML = menuContents;
         });
     }
 });
 
-function _generateAdvancedIssueButton(newIssueUrl = "#") {
+function _createAdvancedIssueButton(newIssueUrl = "#") {
     return `
         <div class="select-menu d-inline-block js-menu-container js-select-menu float-right">
             <div class="BtnGroup">
@@ -38,12 +41,71 @@ function _generateAdvancedIssueButton(newIssueUrl = "#") {
     `;
 }
 
-async function _generateMenuItems(newIssueUrl) {
-    const templateData = await _getTemplateData();
+async function _fetchTemplateData() {
+    const host = location.protocol + "//" +
+        (location.host === "github.com" ? "api.github.com" : (location.host + "/api/v3"));
+
+    const match = location.pathname.match(/([^\/]+)\/([^\/]+)/);
+    const username = match[1];
+    const reponame = match[2];
+
+    // https://developer.github.com/v3/repos/contents/
+    const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE`;
+
+    const requestInit = {
+        cache: false
+    };
+
+    let response;
+    await fetch(url, requestInit)
+        .then(res => {
+            response = res;
+        })
+        .catch(err => {
+            console.error(err);
+        });
+
+    let templateData = {
+        ok: response.ok,
+        status: response.status
+    };
+
+    if (response.ok) {
+        templateData.contents = await _convertReadableStreamToJson(response);
+    } else {
+        templateData.contents = _getContentsOnError(response.status);
+    }
+
+    return templateData;
+}
+
+async function _convertReadableStreamToJson(res) {
+    let jsonData;
+    await res.json().then(data => {jsonData = data});
+
+    return jsonData;
+}
+
+// TODO: refactor to HTML
+function _getContentsOnError(status) {
+    switch (status) {
+        case 404:
+            return "404 error occurs";
+        default:
+            return "Unknown error occurs";
+    }
+}
+
+function _createMenuContents(data) {
+    if (!data.ok) {
+        return data.contents;
+    }
+
+    const {contents, newIssueUrl} = data;
+    const templateNames = _extractTemplateNames(contents);
     const items = [];
 
-    for (const templateDatum of templateData) {
-        const tempName = _extractTemplateName(templateDatum);
+    for (const tempName of templateNames) {
         const href = newIssueUrl + "?template=" + tempName + ".md&labels=" + tempName;
         const item = `
             <div class="select-menu-item js-navigation-item">
@@ -58,31 +120,13 @@ async function _generateMenuItems(newIssueUrl) {
     return items.join("");
 }
 
-async function _getTemplateData() {
-    const host = location.protocol + "//" +
-        (location.host === "github.com" ? "api.github.com" : (location.host + "/api/v3"));
+function _extractTemplateNames(contents) {
+    let templateNames = [];
 
-    const match = location.pathname.match(/([^\/]+)\/([^\/]+)/);
-    const username = match[1];
-    const reponame = match[2];
+    for (const content of contents) {
+        const match = content.name.match(/(.*).md$/i);
+        templateNames.push(match[1]);
+    }
 
-    // https://developer.github.com/v3/repos/contents/
-    const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATES`;
-
-    let templateData;
-    await fetch(url)
-        .then(res => res.json())
-        .then(data => {
-            templateData = data;
-        })
-        .catch(err => {
-            console.error(err);
-        });
-
-    return templateData;
-}
-
-function _extractTemplateName(templateDatum) {
-    const match = templateDatum.name.match(/(.*).md$/i);
-    return match[1];
+    return templateNames;
 }
