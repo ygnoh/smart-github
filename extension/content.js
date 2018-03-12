@@ -83,10 +83,22 @@ async function _convertReadableStreamToJson(res) {
 function _getContentsOnError(status) {
     switch (status) {
         case 404:
-            return "404 error occurs";
+            return `
+                <div>
+                    비공개 저장소에서 정상적인 기능을 이용하려면 access token이 필요합니다. 
+                    <a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">이 링크</a>를
+                    통해서 생성하고, 아래에 붙여 넣어주세요.
+                </div>
+                <input name="token" type="text" placeholder="이 곳에 토큰을 넣어주세요" autocomplete="off">
+                <button class="sg-savebtn">저장</button>
+            `;
         default:
-            return "Unknown error occurs";
+            return "Unknown error occurs.";
     }
+}
+
+function _getNewTokenUrl() {
+    return `${location.protocol}//${location.host}/settings/tokens/new?scopes=repo&description=SmartGithub`;
 }
 
 function _createMenuContents(data) {
