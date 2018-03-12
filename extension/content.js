@@ -18,24 +18,17 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             data.newIssueUrl = newIssueUrl;
 
             let menuContents = _createMenuContents(data);
-            document.getElementById("select-menu-item-container").innerHTML = menuContents;
+            document.querySelector(".sg-dropdown-content").innerHTML = menuContents;
         });
     }
 });
 
 function _createAdvancedIssueButton(newIssueUrl = "#") {
     return `
-        <div class="select-menu d-inline-block js-menu-container js-select-menu float-right">
-            <div class="BtnGroup">
-                <a href="${newIssueUrl}" class="btn btn-primary BtnGroup-item">New issue</a>
-                <button class="btn btn-primary select-menu-button BtnGroup-item js-menu-target" aria-expanded="false"></button>
-            </div>
-            <div class="select-menu-modal-holder">
-                <div class="select-menu-modal">
-                    <div id="select-menu-item-container" class="select-menu-list js-navigation-container js-active-navigation-container">
-                        Loading...
-                    </div>
-                </div>
+        <div class="sg-dropdown float-right">
+            <a href="${newIssueUrl}" class="sg-dropbtn">New issue</a>
+            <div class="sg-dropdown-content">
+                Loading...
             </div>
         </div>
     `;
@@ -108,11 +101,7 @@ function _createMenuContents(data) {
     for (const tempName of templateNames) {
         const href = newIssueUrl + "?template=" + tempName + ".md&labels=" + tempName;
         const item = `
-            <div class="select-menu-item js-navigation-item">
-                <div class="select-menu-item-text">
-                    <a href=${href} class="select-menu-item-heading">${tempName}</span>
-                </div>
-            </div>
+            <a href=${href}>${tempName}</span>
         `;
         items.push(item);
     }
