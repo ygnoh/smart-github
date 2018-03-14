@@ -8,30 +8,54 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 
         const newIssueUrl = newIssueButton.getAttribute("href");
         const subnav = newIssueButton.parentNode;
-
         subnav.removeChild(newIssueButton);
 
-        const advancedIssueButton = _createAdvancedIssueButton(newIssueUrl);
-        subnav.innerHTML += advancedIssueButton;
+        const dropdown = _createDropdown();
+        const newIssueBtn = _createNewIssueBtn(newIssueUrl);
+        const dropdownContent = _createDropdownContent();
+        const loadingMsg = _createLoadingMsg();
+
+        dropdownContent.appendChild(loadingMsg);
+        dropdown.append(newIssueBtn, dropdownContent);
+        subnav.appendChild(dropdown);
 
         _fetchTemplateData().then(data => {
             data.newIssueUrl = newIssueUrl;
 
-            let menuContents = _createMenuContents(data);
-            document.querySelector(".sg-dropdown-content").innerHTML = menuContents;
+            const menuContents = _createMenuContents(data);
+            dropdownContent.replaceChild(menuContents, loadingMsg);
         });
     }
 });
 
-function _createAdvancedIssueButton(newIssueUrl = "#") {
-    return `
-        <div class="sg-dropdown float-right">
-            <a href="${newIssueUrl}" class="sg-dropbtn">New issue</a>
-            <div class="sg-dropdown-content">
-                Loading...
-            </div>
-        </div>
-    `;
+function _createDropdown() {
+    const dropdown = document.createElement("div");
+    dropdown.classList.add("sg-dropdown", "float-right");
+
+    return dropdown;
+}
+
+function _createNewIssueBtn(href = "#") {
+    const newIssueBtn = document.createElement("a");
+    newIssueBtn.classList.add("sg-dropbtn");
+    newIssueBtn.href = href;
+    newIssueBtn.innerHTML = "New Issue";
+
+    return newIssueBtn;
+}
+
+function _createDropdownContent() {
+    const dropdownContent = document.createElement("div");
+    dropdownContent.classList.add("sg-dropdown-content");
+
+    return dropdownContent;
+}
+
+function _createLoadingMsg() {
+    const loadingMsg = document.createElement("p");
+    loadingMsg.innerHTML = "Loading...";
+
+    return loadingMsg;
 }
 
 async function _fetchTemplateData() {
@@ -63,6 +87,7 @@ async function _fetchTemplateData() {
         status: response.status
     };
 
+    // TODO: 어떨 땐 JSON 어떨 땐 DOM? 일관성 필요함
     if (response.ok) {
         templateData.contents = await _convertReadableStreamToJson(response);
     } else {
@@ -84,13 +109,10 @@ function _getContentsOnError(status) {
     switch (status) {
         case 404:
             return `
-                <div>
-                    비공개 저장소에서 정상적인 기능을 이용하려면 access token이 필요합니다. 
-                    <a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">이 링크</a>를
-                    통해서 생성하고, 아래에 붙여 넣어주세요.
-                </div>
-                <input name="token" type="text" placeholder="이 곳에 토큰을 넣어주세요" autocomplete="off">
-                <button class="sg-savebtn">저장</button>
+                비공개 저장소에서 정상적인 기능을 이용하려면 access token이 필요합니다.
+                <a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">이 링크</a>를
+                통해서 생성하고, 아래에 붙여 넣어주세요.
+                <input id="sg-token" type="text" placeholder="이 곳에 토큰을 넣어주세요" autocomplete="off">
             `;
         default:
             return "Unknown error occurs.";
@@ -102,23 +124,41 @@ function _getNewTokenUrl() {
 }
 
 function _createMenuContents(data) {
+    const dropdownContents = document.createElement("div");
+
     if (!data.ok) {
-        return data.contents;
+        // event bind 문제로 저장 버튼은 따로 삽입함
+        const savebtn = _createSaveTokenBtn();
+        dropdownContents.innerHTML = data.contents;
+        dropdownContents.appendChild(savebtn);
+
+        return dropdownContents;
     }
 
     const {contents, newIssueUrl} = data;
     const templateNames = _extractTemplateNames(contents);
-    const items = [];
 
     for (const tempName of templateNames) {
         const href = newIssueUrl + "?template=" + tempName + ".md&labels=" + tempName;
-        const item = `
-            <a href=${href}>${tempName}</span>
-        `;
-        items.push(item);
+        const item = `<a href=${href}>${tempName}</span>`;
+
+        dropdownContents.innerHTML += item;
     }
 
-    return items.join("");
+    return dropdownContents;
+}
+
+function _createSaveTokenBtn() {
+    const savebtn = document.createElement("button");
+    savebtn.addEventListener("click", _saveToken);
+    savebtn.innerHTML = "저장";
+
+    return savebtn;
+}
+
+function _saveToken() {
+    const token = document.getElementById("sg-token").value;
+    console.log(token);
 }
 
 function _extractTemplateNames(contents) {
