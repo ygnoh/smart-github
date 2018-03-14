@@ -10,45 +10,45 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         const subnav = newIssueButton.parentNode;
         subnav.removeChild(newIssueButton);
 
-        const dropdown = _createDropdown();
+        const dropdownWrapper = _createDropdownWrapper();
         const newIssueBtn = _createNewIssueBtn(newIssueUrl);
-        const dropdownContent = _createDropdownContent();
+        const dropdown = _createDropdown();
         const loadingMsg = _createLoadingMsg();
 
-        dropdownContent.appendChild(loadingMsg);
-        dropdown.append(newIssueBtn, dropdownContent);
-        subnav.appendChild(dropdown);
+        dropdown.appendChild(loadingMsg);
+        dropdownWrapper.append(newIssueBtn, dropdown);
+        subnav.appendChild(dropdownWrapper);
 
         _fetchTemplateData().then(data => {
             data.newIssueUrl = newIssueUrl;
 
-            const menuContents = _createMenuContents(data);
-            dropdownContent.replaceChild(menuContents, loadingMsg);
+            const dropdownContents = _createDropdownContents(data);
+            dropdown.replaceChild(dropdownContents, loadingMsg);
         });
     }
 });
 
-function _createDropdown() {
-    const dropdown = document.createElement("div");
-    dropdown.classList.add("sg-dropdown", "float-right");
+function _createDropdownWrapper() {
+    const dropdownWrapper = document.createElement("div");
+    dropdownWrapper.classList.add("sg-dropdown-wrapper", "float-right");
 
-    return dropdown;
+    return dropdownWrapper;
 }
 
 function _createNewIssueBtn(href = "#") {
     const newIssueBtn = document.createElement("a");
-    newIssueBtn.classList.add("sg-dropbtn");
+    newIssueBtn.classList.add("sg-dropdown-btn");
     newIssueBtn.href = href;
     newIssueBtn.innerHTML = "New Issue";
 
     return newIssueBtn;
 }
 
-function _createDropdownContent() {
-    const dropdownContent = document.createElement("div");
-    dropdownContent.classList.add("sg-dropdown-content");
+function _createDropdown() {
+    const dropdown= document.createElement("div");
+    dropdown.classList.add("sg-dropdown");
 
-    return dropdownContent;
+    return dropdown;
 }
 
 function _createLoadingMsg() {
@@ -123,8 +123,9 @@ function _getNewTokenUrl() {
     return `${location.protocol}//${location.host}/settings/tokens/new?scopes=repo&description=SmartGithub`;
 }
 
-function _createMenuContents(data) {
+function _createDropdownContents(data) {
     const dropdownContents = document.createElement("div");
+    dropdownContents.classList.add("sg-dropdown-contents");
 
     if (!data.ok) {
         // event bind 문제로 저장 버튼은 따로 삽입함
