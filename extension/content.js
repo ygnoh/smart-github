@@ -39,7 +39,7 @@ function _createNewIssueBtn(href = "#") {
     const newIssueBtn = document.createElement("a");
     newIssueBtn.classList.add("sg-dropdown-btn");
     newIssueBtn.href = href;
-    newIssueBtn.innerHTML = "New Issue";
+    newIssueBtn.innerHTML = "New issue";
 
     return newIssueBtn;
 }
@@ -73,8 +73,9 @@ async function _fetchTemplateData() {
     const requestInit = {};
 
     await new Promise((resolve, reject) => {
-        chrome.storage.sync.get("sg-token", result => {
-            const token = result["sg-token"];
+        const tokenKey = `sg-token(${location.host})`;
+        chrome.storage.sync.get(tokenKey, result => {
+            const token = result[tokenKey];
 
             if (token) {
                 requestInit.headers = {
@@ -146,7 +147,8 @@ function _getTokenListUrl() {
 }
 
 function _getNewTokenUrl() {
-    return `${location.protocol}//${location.host}/settings/tokens/new?scopes=repo&description=SmartGithub`;
+    return `${location.protocol}//${location.host}/settings/tokens/new?
+        scopes=repo&description=SmartGithub(${location.host})`;
 }
 
 function _createDropdownContents(data) {
@@ -184,8 +186,9 @@ function _createSaveTokenBtn() {
 }
 
 function _saveToken() {
+    const tokenKey = `sg-token(${location.host})`;
     const token = document.getElementById("sg-token").value;
-    chrome.storage.sync.set({"sg-token": token}, () => {
+    chrome.storage.sync.set({[tokenKey]: token}, () => {
         alert("토큰이 성공적으로 저장되었습니다.");
         location.reload();
     });
