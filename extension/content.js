@@ -52,7 +52,8 @@ function _createDropdown() {
 }
 
 function _createLoadingMsg() {
-    const loadingMsg = document.createElement("p");
+    const loadingMsg = document.createElement("a");
+    loadingMsg.href = "#";
     loadingMsg.innerHTML = "Loading...";
 
     return loadingMsg;
