@@ -69,9 +69,21 @@ async function _fetchTemplateData() {
     // https://developer.github.com/v3/repos/contents/
     const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE`;
 
-    const requestInit = {
-        cache: false
-    };
+    const requestInit = {};
+
+    await new Promise((resolve, reject) => {
+        chrome.storage.sync.get("sg-token", result => {
+            const token = result["sg-token"];
+
+            if (token) {
+                requestInit.headers = {
+                    Authorization: `token ${token}`
+                };
+            }
+
+            resolve();
+        });
+    });
 
     let response;
     await fetch(url, requestInit)
@@ -159,7 +171,10 @@ function _createSaveTokenBtn() {
 
 function _saveToken() {
     const token = document.getElementById("sg-token").value;
-    console.log(token);
+    chrome.storage.sync.set({"sg-token": token}, () => {
+        alert("토큰이 성공적으로 저장되었습니다.");
+        location.reload();
+    });
 }
 
 function _extractTemplateNames(contents) {

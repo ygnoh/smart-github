@@ -26,7 +26,8 @@
     ],
     "permissions": [
         "tabs",
-        "webNavigation"
+        "webNavigation",
+        "storage"
     ],
 
     "author": "yonggoo.noh@gmail.com",
