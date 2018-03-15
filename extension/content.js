@@ -119,9 +119,18 @@ async function _convertReadableStreamToJson(res) {
 // TODO: refactor to HTML
 function _getContentsOnError(status) {
     switch (status) {
+        case 401:
+            return `
+                현재 사용하시는 토큰이 유효하지 않습니다.
+                <a class="sg-new-token" href="${_getTokenListUrl()}" target="_blank">이 링크</a>를
+                통해서 이전 <strong>SmartGithub</strong> 토큰을 지운 후 
+                <a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">여기서 다시 생성</a>
+                해주세요! 그리고, 아래에 붙여 넣어주세요.
+                <input id="sg-token" type="text" placeholder="이 곳에 토큰을 넣어주세요" autocomplete="off">
+            `;
         case 404:
             return `
-                비공개 저장소에서 정상적인 기능을 이용하려면 access token이 필요합니다.
+                비공개 저장소에서 모든 기능을 이용하려면 토큰이 필요합니다.
                 <a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">이 링크</a>를
                 통해서 생성하고, 아래에 붙여 넣어주세요.
                 <input id="sg-token" type="text" placeholder="이 곳에 토큰을 넣어주세요" autocomplete="off">
@@ -129,6 +138,10 @@ function _getContentsOnError(status) {
         default:
             return "Unknown error occurs.";
     }
+}
+
+function _getTokenListUrl() {
+    return `${location.protocol}//${location.host}/settings/tokens`;
 }
 
 function _getNewTokenUrl() {
