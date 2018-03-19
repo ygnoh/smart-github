@@ -1,0 +1,6 @@
+dist/
+dist-dev/
+package-lock.json
+.vscode/
+.cache/
+node_modules/
