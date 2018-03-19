@@ -4,7 +4,9 @@
   "description": "Chrome extension for github",
   "main": "extension/background.js",
   "scripts": {
-    "build": "parcel build ./extension/background.js -o background.min.js && parcel build ./extension/content.js -o content.min.js",
+    "build-background": "parcel build ./extension/background.js -o background.min.js --no-cache",
+    "build-content": "parcel build ./extension/content.js -o content.min.js --no-cache",
+    "build": "npm run build-background && npm run build-content",
     "clean": "rm -rf ./dist/*.js"
   },
   "repository": {
