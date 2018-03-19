@@ -1,0 +1,27 @@
+{
+  "name": "smart-github",
+  "version": "1.0.0",
+  "description": "Chrome extension for github",
+  "main": "extension/background.js",
+  "scripts": {
+    "build": "parcel build ./extension/background.js -o background.min.js && parcel build ./extension/content.js -o content.min.js",
+    "clean": "rm -rf ./dist/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ygnoh/smart-github.git"
+  },
+  "keywords": [],
+  "author": "Yonggoo Noh <yonggoo.noh@gmail.com> (https://github.com/ygnoh)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ygnoh/smart-github/issues"
+  },
+  "homepage": "https://github.com/ygnoh/smart-github#readme",
+  "dependencies": {
+    "babel-preset-env": "^1.6.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0"
+  }
+}
