@@ -4,10 +4,14 @@
   "description": "Chrome extension for github",
   "main": "extension/background.js",
   "scripts": {
-    "build-background": "parcel build ./extension/background.js -o background.min.js --no-cache",
-    "build-content": "parcel build ./extension/content.js -o content.min.js --no-cache",
-    "build": "npm run build-background && npm run build-content",
-    "clean": "rm -rf ./dist/*.js"
+    "build-background": "parcel build ./src/background.js -o background.min.js --no-cache",
+    "build-content": "parcel build ./src/content.js -o content.min.js --no-cache",
+    "build-css": "parcel build ./src/content.css -o content.min.css --no-cache",
+    "build": "npm run build-background && npm run build-content && npm run build-css",
+    "parcel-background": "parcel build ./src/background.js -o background.js -d dist-dev --no-minify",
+    "parcel-content": "parcel build ./src/content.js -o content.js -d dist-dev --no-minify",
+    "parcel-css": "parcel build ./src/content.css -o content.css -d dist-dev --no-minify",
+    "parcel": "npm run parcel-background && npm run parcel-content && npm run parcel-css"
   },
   "repository": {
     "type": "git",
@@ -21,9 +25,11 @@
   },
   "homepage": "https://github.com/ygnoh/smart-github#readme",
   "dependencies": {
-    "babel-preset-env": "^1.6.1"
+    "babel-runtime": "^6.26.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0"
+    "babel-core": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1"
   }
 }
