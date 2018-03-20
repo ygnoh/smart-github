@@ -13,7 +13,11 @@ const input = document.getElementById("sg-host-input");
 saveBtn.addEventListener("click", saveHost);
 
 function saveHost() {
-    const newHost = input.value;
+    const newHost = input.value.trim();
+    
+    if (newHost === "") {
+        return;
+    }
 
     chrome.storage.sync.get("sg-hosts", result => {
         const defaultHost = "github.com";
