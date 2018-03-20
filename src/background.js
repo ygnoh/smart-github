@@ -27,7 +27,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 function fetchHosts() {
     return new Promise((resolve, reject) => {
-            chrome.storage.sync.get({"sg-hosts": []}, result => {
+            chrome.storage.sync.get("sg-hosts", result => {
             const defaultHost = "github.com";
             const hosts = result["sg-hosts"] || [defaultHost];
 
