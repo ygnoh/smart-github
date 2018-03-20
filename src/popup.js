@@ -9,8 +9,10 @@ fetchHosts().then(hosts => {
 });
 
 const saveBtn = document.getElementById("sg-host-save");
+const resetBtn = document.getElementById("sg-host-reset");
 const input = document.getElementById("sg-host-input");
 saveBtn.addEventListener("click", saveHost);
+resetBtn.addEventListener("click", resetHost);
 
 function saveHost() {
     const newHost = input.value.trim();
@@ -34,6 +36,14 @@ function saveHost() {
             chrome.runtime.sendMessage("hosts-updated", () => {
                 location.reload();
             });
+        });
+    });
+}
+
+function resetHost() {
+    chrome.storage.sync.remove("sg-hosts", () => {
+        chrome.runtime.sendMessage("hosts-updated", () => {
+            location.reload();
         });
     });
 }
