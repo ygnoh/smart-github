@@ -5,6 +5,9 @@
 
     "description": "Make your github repo smarter.",
 
+    "browser_action": {
+        "default_popup": "popup.html"
+    },
     "background": {
         "scripts": [
             "background.js"
@@ -14,7 +17,7 @@
     "content_scripts": [
         {
             "matches": [
-                "*://github.com/*"
+                "<all_urls>"
             ],
             "js": [
                 "content.js"
