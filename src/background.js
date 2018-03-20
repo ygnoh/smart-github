@@ -1,15 +1,18 @@
 // default regex that will never match anything
-let rxGithubIssuesOrPulls = /(?!)/;
+let rxValidUrl = /(?!)/;
 
-fetchHosts().then(hosts => {
-    const rxHosts = hosts.join("|");
-    rxGithubIssuesOrPulls = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/(?:issues|pulls)\/?$`, "i");
+updateRxValidUrl();
+
+chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+    if (msg === "hosts-updated") {
+        updateRxValidUrl();
+    }
 });
 
 chrome.webNavigation.onCompleted.addListener(function(details) {
     const {url, tabId} = details;
 
-    if (rxGithubIssuesOrPulls.test(url)) {
+    if (rxValidUrl.test(url)) {
         chrome.tabs.sendMessage(tabId, "page-refreshed");
     }
 });
@@ -17,7 +20,7 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
 let currentUrl;
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     currentUrl = changeInfo.url || currentUrl;
-    if (changeInfo.status === "complete" && rxGithubIssuesOrPulls.test(currentUrl)) {
+    if (changeInfo.status === "complete" && rxValidUrl.test(currentUrl)) {
         chrome.tabs.sendMessage(tabId, "url-updated");
     }
 });
@@ -30,5 +33,12 @@ function fetchHosts() {
 
             resolve(hosts);
         });
+    });
+}
+
+function updateRxValidUrl() {
+    fetchHosts().then(hosts => {
+        const rxHosts = hosts.join("|");
+        rxValidUrl = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/(?:issues|pulls)\/?$`, "i");
     });
 }

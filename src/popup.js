@@ -31,7 +31,9 @@ function saveHost() {
         hosts.push(newHost);
 
         chrome.storage.sync.set({"sg-hosts": hosts}, () => {
-            location.reload();
+            chrome.runtime.sendMessage("hosts-updated", () => {
+                location.reload();
+            });
         });
     });
 }
