@@ -2,11 +2,17 @@
 <html>
     <head>
         <style>
-            BODY {width: 520px; min-height: 250px;}
+            BODY {width: 300px; min-height: 400px;}
         </style>
-        <script src="popup.js"></script>
     </head>
     <body>
-        hi
+        These are your registered hosts:
+        <ul class="sg-list-container"></ul>
+
+        You can register additional hosts here:
+        <input id="sg-host-input" type="text" placeholder="Type your host">
+        <button type="submit" id="sg-host-save">Save</button>
+
+        <script src="popup.js"></script>
     </body>
 </html>
