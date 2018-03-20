@@ -48,10 +48,11 @@ function resetHost() {
     });
 }
 
-async function fetchHosts() {
-    return await new Promise((resolve, reject) => {
+function fetchHosts() {
+    return new Promise((resolve, reject) => {
         chrome.storage.sync.get("sg-hosts", result => {
             const hosts = result["sg-hosts"] || ["github.com"];
+
             resolve(hosts);
         });
     });
