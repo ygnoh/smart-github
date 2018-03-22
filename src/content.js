@@ -191,12 +191,12 @@ function _saveToken() {
 }
 
 function _extractTemplateNames(contents) {
-    let templateNames = [];
+    let names = [];
 
     for (const content of contents) {
         const match = content.name.match(/(.*).md$/i);
-        templateNames.push(match[1]);
+        match && names.push(match[1]);
     }
 
-    return templateNames;
+    return names;
 }
