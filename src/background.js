@@ -18,10 +18,14 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
 });
 
 let currentUrl;
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) { 
     currentUrl = changeInfo.url || currentUrl;
-    if (changeInfo.status === "complete" && rxValidUrl.test(currentUrl)) {
-        chrome.tabs.sendMessage(tabId, "url-updated");
+    if (rxValidUrl.test(currentUrl)) {
+        changeInfo.status === "complete"? 
+            chrome.tabs.sendMessage(tabId, "url-updated") :
+            chrome.browserAction.setIcon({ path: "icons/activeIcon.png", tabId: tabId}) 
+    } else {
+        chrome.browserAction.setIcon({ path: "icons/deactiveIcon.png", tabId: tabId});
     }
 });
 
