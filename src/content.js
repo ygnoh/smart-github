@@ -25,6 +25,15 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             const dropdownContents = _createDropdownContents(data);
             dropdown.replaceChild(dropdownContents, loadingMsg);
         });
+    } else if (msg === "create-issue-page-loaded") {
+        const bottomArea = document.getElementsByClassName("form-actions")[0];
+        // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
+        if (!bottomArea) {
+            return;
+        }
+
+        const resetBtn = _createResetTemplateBtn();
+        bottomArea.appendChild(resetBtn);
     }
 });
 
@@ -199,4 +208,19 @@ function _extractTemplateNames(contents) {
     }
 
     return templateNames;
+}
+
+function _createResetTemplateBtn() {
+    const resetBtn = document.createElement("a");
+    resetBtn.classList.add("btn");
+    resetBtn.innerHTML = "Reset to template";
+    resetBtn.addEventListener("click", _resetIssueBody);
+
+    return resetBtn;
+}
+
+function _resetIssueBody() {
+    const issueBody = document.getElementById("issue_body");
+    // confirm message
+    issueBody.value = "";
 }

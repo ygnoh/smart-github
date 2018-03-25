@@ -1,11 +1,12 @@
 // default regex that will never match anything
 let rxValidUrl = /(?!)/;
+let rxCreateIssuePage = /(?!)/;
 
-updateRxValidUrl();
+updateRegexp();
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     if (msg === "hosts-updated") {
-        updateRxValidUrl();
+        updateRegexp();
     }
 });
 
@@ -14,14 +15,20 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
 
     if (rxValidUrl.test(url)) {
         chrome.tabs.sendMessage(tabId, "page-refreshed");
+    } else if (rxCreateIssuePage.test(url)) {
+        chrome.tabs.sendMessage(tabId, "create-issue-page-loaded")
     }
 });
 
 let currentUrl;
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     currentUrl = changeInfo.url || currentUrl;
-    if (changeInfo.status === "complete" && rxValidUrl.test(currentUrl)) {
-        chrome.tabs.sendMessage(tabId, "url-updated");
+    if (changeInfo.status === "complete") {
+        if (rxValidUrl.test(currentUrl)) {
+            chrome.tabs.sendMessage(tabId, "url-updated");
+        } else if (rxCreateIssuePage.test(currentUrl)) {
+            chrome.tabs.sendMessage(tabId, "create-issue-page-loaded")
+        }
     }
 });
 
@@ -36,9 +43,10 @@ function fetchHosts() {
     });
 }
 
-function updateRxValidUrl() {
+function updateRegexp() {
     fetchHosts().then(hosts => {
         const rxHosts = hosts.join("|");
         rxValidUrl = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/(?:issues|pulls)\/?$`, "i");
+        rxCreateIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\?.*?template=.*?\.md.*?$`, "i");
     });
 }
