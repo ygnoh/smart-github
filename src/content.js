@@ -1,5 +1,5 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg === "url-updated" || msg === "page-refreshed") {
+    if (msg.name === "issue-pr-page-loaded") {
         const newIssueButton = document.querySelector('a.btn[href$="/issues/new"]')
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
         if (!newIssueButton) {
@@ -25,7 +25,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             const dropdownContents = _createDropdownContents(data);
             dropdown.replaceChild(dropdownContents, loadingMsg);
         });
-    } else if (msg === "create-issue-page-loaded") {
+    } else if (msg.name === "create-issue-page-loaded") {
         const bottomArea = document.getElementsByClassName("form-actions")[0];
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
         if (!bottomArea) {

@@ -5,7 +5,7 @@ let rxCreateIssuePage = /(?!)/;
 updateRegexp();
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    if (msg === "hosts-updated") {
+    if (msg.name === "hosts-updated") {
         updateRegexp();
     }
 });
@@ -14,9 +14,9 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
     const {url, tabId} = details;
 
     if (rxValidUrl.test(url)) {
-        chrome.tabs.sendMessage(tabId, "page-refreshed");
+        chrome.tabs.sendMessage(tabId, {name: "issue-pr-page-loaded"});
     } else if (rxCreateIssuePage.test(url)) {
-        chrome.tabs.sendMessage(tabId, "create-issue-page-loaded")
+        chrome.tabs.sendMessage(tabId, {name: "create-issue-page-loaded"})
     }
 });
 
@@ -25,9 +25,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     currentUrl = changeInfo.url || currentUrl;
     if (changeInfo.status === "complete") {
         if (rxValidUrl.test(currentUrl)) {
-            chrome.tabs.sendMessage(tabId, "url-updated");
+            chrome.tabs.sendMessage(tabId, {name: "issue-pr-page-loaded"});
         } else if (rxCreateIssuePage.test(currentUrl)) {
-            chrome.tabs.sendMessage(tabId, "create-issue-page-loaded")
+            chrome.tabs.sendMessage(tabId, {name: "create-issue-page-loaded"});
         }
     }
 });
