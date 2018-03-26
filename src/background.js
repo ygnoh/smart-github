@@ -47,6 +47,6 @@ function updateRegexp() {
     fetchHosts().then(hosts => {
         const rxHosts = hosts.join("|");
         rxValidUrl = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/(?:issues|pulls)\/?$`, "i");
-        rxCreateIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\?.*?template=.*?\.md.*?$`, "i");
+        rxCreateIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\?.*?template=.*?\.md`, "i");
     });
 }
