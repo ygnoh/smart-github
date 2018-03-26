@@ -16,7 +16,7 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
     if (rxValidUrl.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "issue-pr-page-loaded"});
     } else if (rxCreateIssuePage.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "create-issue-page-loaded"})
+        chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
     }
 });
 
@@ -27,7 +27,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         if (rxValidUrl.test(currentUrl)) {
             chrome.tabs.sendMessage(tabId, {name: "issue-pr-page-loaded"});
         } else if (rxCreateIssuePage.test(currentUrl)) {
-            chrome.tabs.sendMessage(tabId, {name: "create-issue-page-loaded"});
+            chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
         }
     }
 });
