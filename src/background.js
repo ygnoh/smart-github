@@ -38,9 +38,10 @@ function fetchHosts() {
 function updateRegexp() {
     fetchHosts().then(hosts => {
         const rxHosts = hosts.join("|");
-        rxIssueTab = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/?$`, "i");
+        // rxIssueTab는 다음에 매칭된다: .../issues, .../issues/, .../issues?{anything}
+        rxIssueTab = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues(?:\/?$|\\?)`, "i");
         rxPRTab = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/pulls\/?$`, "i");
-        rxNewIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\?.*?template=.*?\.md`, "i");
+        rxNewIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\\?.*?template=.*?\.md`, "i");
         rxIssueContentsPage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/[0-9]+\/?$`, "i");
     });
 }
