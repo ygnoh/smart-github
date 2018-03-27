@@ -1,26 +1,26 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-loaded") {
-        const newIssueButton = document.querySelector('a.btn[href$="/issues/new"]');
+        const oldIssueBtn = document.querySelector('a.btn[href$="/issues/new"]');
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
-        if (!newIssueButton) {
+        if (!oldIssueBtn) {
             return;
         }
 
-        const newIssueUrl = newIssueButton.getAttribute("href");
-        const subnav = newIssueButton.parentNode;
-        subnav.removeChild(newIssueButton);
+        const newIssueUrl = oldIssueBtn.getAttribute("href");
+        const btnContainer = oldIssueBtn.parentNode;
+        btnContainer.removeChild(oldIssueBtn);
 
         const dropdownWrapper = _createDropdownWrapper();
-        const advancedNewIssueBtn = _createNewIssueBtn(newIssueUrl);
+        const advancedIssueBtn = _createNewIssueBtn(newIssueUrl);
         if (msg.name === "issue-contents-loaded") {
-            _convertToSmallBtn(advancedNewIssueBtn);
+            _convertToSmallBtn(advancedIssueBtn);
         }
         const dropdown = _createDropdown();
         const loadingMsg = _createLoadingMsg();
 
         dropdown.appendChild(loadingMsg);
-        dropdownWrapper.append(advancedNewIssueBtn, dropdown);
-        subnav.appendChild(dropdownWrapper);
+        dropdownWrapper.append(advancedIssueBtn, dropdown);
+        btnContainer.appendChild(dropdownWrapper);
 
         _fetchTemplateData().then(data => {
             data.newIssueUrl = newIssueUrl;
