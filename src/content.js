@@ -32,6 +32,12 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             return;
         }
 
+        // [#28] 방어 처리
+        const oldResetBtn = bottomArea.getElementsByClassName("sg-reset-btn");
+        while (oldResetBtn.length > 0) {
+            oldResetBtn[0].remove();
+        }
+
         const resetBtn = _createResetTemplateBtn();
         bottomArea.appendChild(resetBtn);
     }
@@ -225,7 +231,7 @@ function _extractTemplateNames(contents) {
 
 function _createResetTemplateBtn() {
     const resetBtn = document.createElement("a");
-    resetBtn.classList.add("btn");
+    resetBtn.classList.add("btn", "sg-reset-btn");
     resetBtn.innerHTML = "Reset to template";
     resetBtn.addEventListener("click", _resetIssueBody);
 
