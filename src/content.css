@@ -72,3 +72,10 @@
     border: 0 !important;
     padding: 0 !important;
 }
+
+.sg-small-btn {
+    padding: 3px 10px;
+    font-size: 12px;
+    line-height: 20px;
+    margin-left: 5px;
+}

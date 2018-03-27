@@ -1,6 +1,6 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.name === "issue-tab-loaded") {
-        const newIssueButton = document.querySelector('a.btn[href$="/issues/new"]')
+        const newIssueButton = document.querySelector('a.btn[href$="/issues/new"]');
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
         if (!newIssueButton) {
             return;
@@ -42,7 +42,32 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         const resetBtn = _createResetTemplateBtn();
         bottomArea.appendChild(resetBtn);
     } else if (msg.name === "issue-contents-loaded") {
-        console.log("issue contents loaded");
+        const newIssueButton = document.querySelector('a.btn[href$="/issues/new"]');
+        // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
+        if (!newIssueButton) {
+            return;
+        }
+
+        const newIssueUrl = newIssueButton.getAttribute("href");
+        const headerActions = newIssueButton.parentNode;
+        headerActions.removeChild(newIssueButton);
+
+        const dropdownWrapper = _createDropdownWrapper();
+        const newIssueBtn = _createNewIssueBtn(newIssueUrl);
+        _convertToSmallBtn(newIssueBtn);
+        const dropdown = _createDropdown();
+        const loadingMsg = _createLoadingMsg();
+
+        dropdown.appendChild(loadingMsg);
+        dropdownWrapper.append(newIssueBtn, dropdown);
+        headerActions.appendChild(dropdownWrapper);
+
+        _fetchTemplateData().then(data => {
+            data.newIssueUrl = newIssueUrl;
+
+            const dropdownContents = _createDropdownContents(data);
+            dropdown.replaceChild(dropdownContents, loadingMsg);
+        });
     }
 });
 
@@ -297,4 +322,8 @@ function _b64DecodeUnicode(str) {
     return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
+}
+
+function _convertToSmallBtn(largeBtn) {
+    largeBtn.classList.add("sg-small-btn");
 }
