@@ -1,5 +1,6 @@
 // default regex that will never match anything
-let rxValidUrl = /(?!)/;
+let rxIssueTab = /(?!)/;
+let rxPRTab = /(?!)/;
 let rxNewIssuePage = /(?!)/;
 
 updateRegexp();
