@@ -1,6 +1,6 @@
 // default regex that will never match anything
 let rxValidUrl = /(?!)/;
-let rxCreateIssuePage = /(?!)/;
+let rxNewIssuePage = /(?!)/;
 
 updateRegexp();
 
@@ -15,7 +15,7 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
 
     if (rxValidUrl.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "issue-pr-page-loaded"});
-    } else if (rxCreateIssuePage.test(url)) {
+    } else if (rxNewIssuePage.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
     }
 });
@@ -26,7 +26,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if (changeInfo.status === "complete") {
         if (rxValidUrl.test(currentUrl)) {
             chrome.tabs.sendMessage(tabId, {name: "issue-pr-page-loaded"});
-        } else if (rxCreateIssuePage.test(currentUrl)) {
+        } else if (rxNewIssuePage.test(currentUrl)) {
             chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
         }
     }
@@ -47,6 +47,6 @@ function updateRegexp() {
     fetchHosts().then(hosts => {
         const rxHosts = hosts.join("|");
         rxValidUrl = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/(?:issues|pulls)\/?$`, "i");
-        rxCreateIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\?.*?template=.*?\.md`, "i");
+        rxNewIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\?.*?template=.*?\.md`, "i");
     });
 }
