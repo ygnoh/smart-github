@@ -2,6 +2,7 @@
 let rxIssueTab = /(?!)/;
 let rxPRTab = /(?!)/;
 let rxNewIssuePage = /(?!)/;
+let rxIssueContents = /(?!)/;
 
 updateRegexp();
 
@@ -20,6 +21,8 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
         chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
     } else if (rxNewIssuePage.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
+    } else if (rxIssueContents.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "issue-contents-loaded"});
     }
 });
 
@@ -33,6 +36,8 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
             chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
         } else if (rxNewIssuePage.test(currentUrl)) {
             chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
+        } else if (rxIssueContents.test(currentUrl)) {
+            chrome.tabs.sendMessage(tabId, {name: "issue-contents-loaded"});
         }
     }
 });
@@ -54,5 +59,6 @@ function updateRegexp() {
         rxIssueTab = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/?$`, "i");
         rxPRTab = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/pulls\/?$`, "i");
         rxNewIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\?.*?template=.*?\.md`, "i");
+        rxIssueContents = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/[0-9]+\/?$`, "i");
     });
 }

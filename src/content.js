@@ -41,6 +41,8 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 
         const resetBtn = _createResetTemplateBtn();
         bottomArea.appendChild(resetBtn);
+    } else if (msg.name === "issue-contents-loaded") {
+        console.log("issue contents loaded");
     }
 });
 
