@@ -13,32 +13,14 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 });
 
 chrome.webNavigation.onCompleted.addListener(function(details) {
-    const {url, tabId} = details;
-
-    if (rxIssueTab.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "issue-tab-loaded"});
-    } else if (rxPRTab.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
-    } else if (rxNewIssuePage.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
-    } else if (rxIssueContents.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "issue-contents-loaded"});
-    }
+    sendMessage(details);
 });
 
 let currentUrl;
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     currentUrl = changeInfo.url || currentUrl;
     if (changeInfo.status === "complete") {
-        if (rxIssueTab.test(currentUrl)) {
-            chrome.tabs.sendMessage(tabId, {name: "issue-tab-loaded"});
-        } else if (rxPRTab.test(currentUrl)) {
-            chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
-        } else if (rxNewIssuePage.test(currentUrl)) {
-            chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
-        } else if (rxIssueContents.test(currentUrl)) {
-            chrome.tabs.sendMessage(tabId, {name: "issue-contents-loaded"});
-        }
+        sendMessage({url: currentUrl, tabId});
     }
 });
 
@@ -61,4 +43,16 @@ function updateRegexp() {
         rxNewIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\?.*?template=.*?\.md`, "i");
         rxIssueContents = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/[0-9]+\/?$`, "i");
     });
+}
+
+function sendMessage({url, tabId}) {
+    if (rxIssueTab.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "issue-tab-loaded"});
+    } else if (rxPRTab.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
+    } else if (rxNewIssuePage.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
+    } else if (rxIssueContents.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "issue-contents-loaded"});
+    }
 }
