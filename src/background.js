@@ -14,8 +14,10 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 chrome.webNavigation.onCompleted.addListener(function(details) {
     const {url, tabId} = details;
 
-    if (rxValidUrl.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "issue-pr-page-loaded"});
+    if (rxIssueTab.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "issue-tab-loaded"});
+    } else if (rxPRTab.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
     } else if (rxNewIssuePage.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
     }
@@ -25,8 +27,10 @@ let currentUrl;
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     currentUrl = changeInfo.url || currentUrl;
     if (changeInfo.status === "complete") {
-        if (rxValidUrl.test(currentUrl)) {
-            chrome.tabs.sendMessage(tabId, {name: "issue-pr-page-loaded"});
+        if (rxIssueTab.test(currentUrl)) {
+            chrome.tabs.sendMessage(tabId, {name: "issue-tab-loaded"});
+        } else if (rxPRTab.test(currentUrl)) {
+            chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
         } else if (rxNewIssuePage.test(currentUrl)) {
             chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
         }
@@ -47,7 +51,8 @@ function fetchHosts() {
 function updateRegexp() {
     fetchHosts().then(hosts => {
         const rxHosts = hosts.join("|");
-        rxValidUrl = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/(?:issues|pulls)\/?$`, "i");
+        rxIssueTab = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/?$`, "i");
+        rxPRTab = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/pulls\/?$`, "i");
         rxNewIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\?.*?template=.*?\.md`, "i");
     });
 }
