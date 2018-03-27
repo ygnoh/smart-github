@@ -33,7 +33,7 @@ function saveHost() {
         hosts.push(newHost);
 
         chrome.storage.sync.set({"sg-hosts": hosts}, () => {
-            chrome.runtime.sendMessage("hosts-updated", () => {
+            chrome.runtime.sendMessage({name: "hosts-updated"}, () => {
                 location.reload();
             });
         });
@@ -42,7 +42,7 @@ function saveHost() {
 
 function resetHost() {
     chrome.storage.sync.remove("sg-hosts", () => {
-        chrome.runtime.sendMessage("hosts-updated", () => {
+        chrome.runtime.sendMessage({name: "hosts-updated"}, () => {
             location.reload();
         });
     });

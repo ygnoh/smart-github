@@ -1,5 +1,5 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg === "url-updated" || msg === "page-refreshed") {
+    if (msg.name === "issue-pr-page-loaded") {
         const newIssueButton = document.querySelector('a.btn[href$="/issues/new"]')
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
         if (!newIssueButton) {
@@ -25,6 +25,15 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             const dropdownContents = _createDropdownContents(data);
             dropdown.replaceChild(dropdownContents, loadingMsg);
         });
+    } else if (msg.name === "new-issue-page-loaded") {
+        const bottomArea = document.getElementsByClassName("form-actions")[0];
+        // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
+        if (!bottomArea) {
+            return;
+        }
+
+        const resetBtn = _createResetTemplateBtn();
+        bottomArea.appendChild(resetBtn);
     }
 });
 
@@ -60,32 +69,19 @@ function _createLoadingMsg() {
 }
 
 async function _fetchTemplateData() {
-    const host = location.protocol + "//" +
-        (location.host === "github.com" ? "api.github.com" : (location.host + "/api/v3"));
-
-    const match = location.pathname.match(/([^\/]+)\/([^\/]+)/);
-    const username = match[1];
-    const reponame = match[2];
+    const {host, username, reponame} = _getApiInfo();
 
     // https://developer.github.com/v3/repos/contents/
     const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE`;
 
+    const token = await _fetchToken();
+
     const requestInit = {};
-
-    await new Promise((resolve, reject) => {
-        const tokenKey = `sg-token(${location.host})`;
-        chrome.storage.sync.get(tokenKey, result => {
-            const token = result[tokenKey];
-
-            if (token) {
-                requestInit.headers = {
-                    Authorization: `token ${token}`
-                };
-            }
-
-            resolve();
-        });
-    });
+    if (token) {
+        requestInit.headers = {
+            Authorization: `token ${token}`
+        };
+    }
 
     let response;
     await fetch(url, requestInit)
@@ -109,6 +105,32 @@ async function _fetchTemplateData() {
     }
 
     return templateData;
+}
+
+function _getApiInfo() {
+    const host = location.protocol + "//" +
+        (location.host === "github.com" ? "api.github.com" : (location.host + "/api/v3"));
+
+    const match = location.pathname.match(/([^\/]+)\/([^\/]+)/);
+    const username = match[1];
+    const reponame = match[2];
+
+    return {
+        host,
+        username,
+        reponame
+    };
+}
+
+function _fetchToken() {
+    return new Promise((resolve, reject) => {
+        const tokenKey = `sg-token(${location.host})`;
+        chrome.storage.sync.get(tokenKey, result => {
+            const token = result[tokenKey];
+
+            resolve(token);
+        });
+    });
 }
 
 async function _convertReadableStreamToJson(res) {
@@ -199,4 +221,71 @@ function _extractTemplateNames(contents) {
     }
 
     return names;
+}
+
+function _createResetTemplateBtn() {
+    const resetBtn = document.createElement("a");
+    resetBtn.classList.add("btn");
+    resetBtn.innerHTML = "Reset to template";
+    resetBtn.addEventListener("click", _resetIssueBody);
+
+    return resetBtn;
+}
+
+function _resetIssueBody() {
+    if (!window.confirm("정말 리셋하시겠습니까?")) {
+        return;
+    }
+
+    const templateName = location.search.match(/template=(.*?)\.md/i)[1];
+    _fetchIssueTemplateInfo(templateName).then(result => {
+        const issueBody = document.getElementById("issue_body");
+        // base64 decoding
+        const content = _b64DecodeUnicode(result.contents.content);
+
+        issueBody.value = content;
+    });
+}
+
+async function _fetchIssueTemplateInfo(name) {
+    const {host, username, reponame} = _getApiInfo();
+    // https://developer.github.com/v3/repos/contents/#get-contents
+    const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE/${name}.md`;
+    const token = await _fetchToken();
+
+    const requestInit = {};
+    if (token) {
+        requestInit.headers = {
+            Authorization: `token ${token}`
+        };
+    }
+
+    let response;
+    await fetch(url, requestInit)
+        .then(res => {
+            response = res;
+        })
+        .catch(err => {
+            console.error(err);
+        });
+
+    let info = {
+        ok: response.ok,
+        status: response.status
+    };
+
+    info.contents = await _convertReadableStreamToJson(response);
+
+    return info;
+}
+
+/**
+ * github API에서 base64로 인코딩된 문자열을 내려주는데,
+ * 단순히 atob() 메서드로는 해결되지 않아 아래의 답변을 이용하였음
+ * https://stackoverflow.com/a/30106551/5247212
+ */
+function _b64DecodeUnicode(str) {
+    return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
 }
