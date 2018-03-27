@@ -11,15 +11,15 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         subnav.removeChild(newIssueButton);
 
         const dropdownWrapper = _createDropdownWrapper();
-        const newIssueBtn = _createNewIssueBtn(newIssueUrl);
+        const advancedNewIssueBtn = _createNewIssueBtn(newIssueUrl);
         if (msg.name === "issue-contents-loaded") {
-            _convertToSmallBtn(newIssueBtn);
+            _convertToSmallBtn(advancedNewIssueBtn);
         }
         const dropdown = _createDropdown();
         const loadingMsg = _createLoadingMsg();
 
         dropdown.appendChild(loadingMsg);
-        dropdownWrapper.append(newIssueBtn, dropdown);
+        dropdownWrapper.append(advancedNewIssueBtn, dropdown);
         subnav.appendChild(dropdownWrapper);
 
         _fetchTemplateData().then(data => {
