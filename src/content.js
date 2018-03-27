@@ -6,21 +6,23 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             return;
         }
 
+        const btnParent = oldIssueBtn.parentNode;
         const newIssueUrl = oldIssueBtn.getAttribute("href");
-        const btnContainer = oldIssueBtn.parentNode;
-        btnContainer.removeChild(oldIssueBtn);
-
-        const dropdownWrapper = _createDropdownWrapper();
         const advancedIssueBtn = _createNewIssueBtn(newIssueUrl);
+
         if (msg.name === "issue-contents-loaded") {
             _convertToSmallBtn(advancedIssueBtn);
         }
+
+        const dropdownWrapper = _createDropdownWrapper();
         const dropdown = _createDropdown();
         const loadingMsg = _createLoadingMsg();
 
         dropdown.appendChild(loadingMsg);
         dropdownWrapper.append(advancedIssueBtn, dropdown);
-        btnContainer.appendChild(dropdownWrapper);
+
+        oldIssueBtn.remove();
+        btnParent.appendChild(dropdownWrapper);
 
         _fetchTemplateData().then(data => {
             data.newIssueUrl = newIssueUrl;
