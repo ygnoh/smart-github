@@ -1,6 +1,8 @@
 // default regex that will never match anything
-let rxValidUrl = /(?!)/;
-let rxCreateIssuePage = /(?!)/;
+let rxIssueTab = /(?!)/;
+let rxPRTab = /(?!)/;
+let rxNewIssuePage = /(?!)/;
+let rxIssueContentsPage = /(?!)/;
 
 updateRegexp();
 
@@ -11,24 +13,14 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 });
 
 chrome.webNavigation.onCompleted.addListener(function(details) {
-    const {url, tabId} = details;
-
-    if (rxValidUrl.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "issue-pr-page-loaded"});
-    } else if (rxCreateIssuePage.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
-    }
+    sendMessage(details);
 });
 
 let currentUrl;
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     currentUrl = changeInfo.url || currentUrl;
     if (changeInfo.status === "complete") {
-        if (rxValidUrl.test(currentUrl)) {
-            chrome.tabs.sendMessage(tabId, {name: "issue-pr-page-loaded"});
-        } else if (rxCreateIssuePage.test(currentUrl)) {
-            chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
-        }
+        sendMessage({url: currentUrl, tabId});
     }
 });
 
@@ -46,7 +38,21 @@ function fetchHosts() {
 function updateRegexp() {
     fetchHosts().then(hosts => {
         const rxHosts = hosts.join("|");
-        rxValidUrl = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/(?:issues|pulls)\/?$`, "i");
-        rxCreateIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\?.*?template=.*?\.md`, "i");
+        rxIssueTab = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/?$`, "i");
+        rxPRTab = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/pulls\/?$`, "i");
+        rxNewIssuePage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/new\?.*?template=.*?\.md`, "i");
+        rxIssueContentsPage = new RegExp(`^https?:\/\/(www\.)?(?:${rxHosts})\/.*?\/issues\/[0-9]+\/?$`, "i");
     });
+}
+
+function sendMessage({url, tabId}) {
+    if (rxIssueTab.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "issue-tab-loaded"});
+    } else if (rxPRTab.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
+    } else if (rxNewIssuePage.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
+    } else if (rxIssueContentsPage.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "issue-contents-page-loaded"});
+    }
 }

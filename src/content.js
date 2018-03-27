@@ -1,23 +1,28 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg.name === "issue-pr-page-loaded") {
-        const newIssueButton = document.querySelector('a.btn[href$="/issues/new"]')
+    if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-page-loaded") {
+        const oldIssueBtn = document.querySelector('a.btn[href$="/issues/new"]');
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
-        if (!newIssueButton) {
+        if (!oldIssueBtn) {
             return;
         }
 
-        const newIssueUrl = newIssueButton.getAttribute("href");
-        const subnav = newIssueButton.parentNode;
-        subnav.removeChild(newIssueButton);
+        const btnParent = oldIssueBtn.parentNode;
+        const newIssueUrl = oldIssueBtn.getAttribute("href");
+        const advancedIssueBtn = _createNewIssueBtn(newIssueUrl);
+
+        if (msg.name === "issue-contents-page-loaded") {
+            _convertToSmallBtn(advancedIssueBtn);
+        }
 
         const dropdownWrapper = _createDropdownWrapper();
-        const newIssueBtn = _createNewIssueBtn(newIssueUrl);
         const dropdown = _createDropdown();
         const loadingMsg = _createLoadingMsg();
 
         dropdown.appendChild(loadingMsg);
-        dropdownWrapper.append(newIssueBtn, dropdown);
-        subnav.appendChild(dropdownWrapper);
+        dropdownWrapper.append(advancedIssueBtn, dropdown);
+
+        oldIssueBtn.remove();
+        btnParent.appendChild(dropdownWrapper);
 
         _fetchTemplateData().then(data => {
             data.newIssueUrl = newIssueUrl;
@@ -25,6 +30,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             const dropdownContents = _createDropdownContents(data);
             dropdown.replaceChild(dropdownContents, loadingMsg);
         });
+    } else if (msg.name === "pr-tab-loaded") {
     } else if (msg.name === "new-issue-page-loaded") {
         const bottomArea = document.getElementsByClassName("form-actions")[0];
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
@@ -294,4 +300,8 @@ function _b64DecodeUnicode(str) {
     return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
+}
+
+function _convertToSmallBtn(largeBtn) {
+    largeBtn.classList.add("sg-small-btn");
 }
