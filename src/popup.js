@@ -1,5 +1,5 @@
 fetchHosts().then(hosts => {
-    const hostListContainer = document.querySelector(".sg-list-container");
+    const hostListContainer = document.querySelector(".sg-host-list");
 
     hosts.forEach(host => {
         const item = document.createElement("li");
