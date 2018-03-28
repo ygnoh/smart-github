@@ -1,0 +1,46 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    outline: none;
+}
+
+.sg-popup {
+    width: 300px;
+    height: 400px;
+    padding: 5px;
+    border-radius: 2px;
+    border-bottom: 6px solid #1d2229;
+}
+
+.sg-popup-header {
+    border-bottom: 2px solid #cacdda;
+    line-height: 30px;
+}
+
+.sg-logo {
+    font-size: 22px;
+    font-family: 'Ubuntu', sans-serif;
+    letter-spacing: -0.5px;
+}
+
+.sg-menu-items {
+    display: block;
+    float: right;
+}
+
+.sg-menu-item {
+    float: left;
+    color: #888da5;
+    border-left: 1px solid #cacdda;
+    padding: 0 7px;
+    font-size: 14px;
+    font-weight: 500;
+}

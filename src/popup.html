@@ -2,21 +2,35 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <style>
-            BODY {width: 300px; min-height: 400px;}
-        </style>
+        <link rel="stylesheet" href="popup.css">
     </head>
     <body>
-        현재 등록된 hosts 정보 입니다:
-        <ul class="sg-list-container"></ul>
+        <div class="sg-popup">
+            <div class="sg-popup-header">
+                <span class="sg-logo">Smart Github</span>
+                <ul class="sg-menu-items">
+                    <li class="sg-menu-item">
+                        <a href="https://github.com/ygnoh/smart-github/issues" target="_blank">Contribute</a>
+                    </li>
+                    <li class="sg-menu-item">
+                        <a href="https://github.com/ygnoh/smart-github" target="_blank">Help</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sg-popup-body">
+                현재 등록된 hosts 정보 입니다:
+                <ul class="sg-list-container"></ul>
+            </div>
+            <div class="sg-popup-footer">
+                이 곳에서 추가로 host를 등록할 수 있어요!
+                <input id="sg-host-input" type="text" placeholder="Host를 입력하세요">
+                <button type="submit" id="sg-host-save">저장</button>
 
-        이 곳에서 추가로 host를 등록할 수 있어요!
-        <input id="sg-host-input" type="text" placeholder="Host를 입력하세요">
-         <button type="submit" id="sg-host-save">저장</button>
-
-        <br>
-        Host 정보를 초기화 하시겠어요?
-        <button id="sg-host-reset">초기화</button>
+                <br>
+                Host 정보를 초기화 하시겠어요?
+                <button id="sg-host-reset">초기화</button>
+            </div>
+        </div>
 
         <script src="popup.js"></script>
     </body>
