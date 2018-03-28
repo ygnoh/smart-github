@@ -15,7 +15,9 @@ saveBtn.addEventListener("click", saveHost);
 resetBtn.addEventListener("click", resetHost);
 
 function saveHost() {
-    const newHost = input.value.trim();
+    let newHost = input.value.trim();
+    // 입력 받은 host에 www. 값이 있다면 제거
+    newHost = newHost.replace(/^www\./, "");
     
     if (newHost === "") {
         return;
