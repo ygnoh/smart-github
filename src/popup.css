@@ -3,10 +3,6 @@
     padding: 0;
 }
 
-ul {
-    list-style: none;
-}
-
 a {
     text-decoration: none;
     outline: none;
@@ -24,6 +20,10 @@ a {
 .sg-popup-header {
     border-bottom: 2px solid #cacdda;
     line-height: 30px;
+}
+
+.sg-popup-header ul {
+    list-style: none;
 }
 
 .sg-logo {
@@ -54,6 +54,7 @@ a {
 
 .sg-host-list {
     padding: 10px;
+    margin-left: 10px;
 }
 
 .sg-host-list li {
@@ -69,4 +70,23 @@ a {
 .sg-popup-footer {
     position: absolute;
     bottom: 10px;
+    left: 9.375%;
+}
+
+#sg-host-input {
+    font-size: 14px;
+    width: 150px;
+    height: 20px;
+    border: none;
+    outline: none;
+    border-bottom: 1.5px solid #cacdda;
+    padding: 0 10px;
+}
+
+.sg-popup-footer button {
+    padding: 6px;
+    font-size: 14px;
+    outline: none;
+    border: none;
+    cursor: pointer;
 }
