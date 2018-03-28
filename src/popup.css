@@ -1,0 +1,92 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    outline: none;
+}
+
+.sg-popup {
+    border-bottom: 6px solid #1d2229;
+    width: 300px;
+    height: 250px;
+    border-radius: 2px;
+    padding: 10px;
+}
+
+/* header */
+.sg-popup-header {
+    border-bottom: 2px solid #cacdda;
+    line-height: 30px;
+}
+
+.sg-popup-header ul {
+    list-style: none;
+}
+
+.sg-logo {
+    font-size: 22px;
+    font-family: 'Ubuntu', sans-serif;
+    letter-spacing: -0.5px;
+}
+
+.sg-menu-items {
+    display: block;
+    float: right;
+}
+
+.sg-menu-item {
+    float: left;
+    color: #888da5;
+    border-left: 1px solid #cacdda;
+    padding: 0 7px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* body */
+.sg-popup-body {
+    font-size: 14px;
+    padding: 10px;
+}
+
+.sg-host-list {
+    padding: 10px;
+    margin-left: 10px;
+}
+
+.sg-host-list li {
+    margin-bottom: 5px;
+}
+
+.sg-popup-heading {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* footer */
+.sg-popup-footer {
+    position: absolute;
+    bottom: 10px;
+    left: 9.375%;
+}
+
+#sg-host-input {
+    font-size: 14px;
+    width: 150px;
+    height: 20px;
+    border: none;
+    outline: none;
+    border-bottom: 1.5px solid #cacdda;
+    padding: 0 10px;
+}
+
+.sg-popup-footer button {
+    padding: 6px;
+    font-size: 14px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
