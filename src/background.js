@@ -1,5 +1,4 @@
 // default regex that will never match anything
-let rxHomeRepoPage = /(?!)/;
 let rxIssueTab = /(?!)/;
 let rxPRTab = /(?!)/;
 let rxNewIssuePage = /(?!)/;
@@ -41,9 +40,6 @@ function updateRegexp() {
     fetchHosts().then(hosts => {
         const rxHosts = hosts.join("|");
 
-        // 다음에 매칭된다: .../{anything except /}/{anything except /}, .../{anything except /}/{anything except /}/
-        rxHomeRepoPage = new RegExp(`^https?://(www\\.)?(?:${rxHosts})/[^/]+?/[^/]+?/?$`, "i");
-
         // 다음에 매칭된다: .../issues, .../issues/, .../issues?{anything}
         rxIssueTab = new RegExp(`^https?://(www\\.)?(?:${rxHosts})/.*?/issues(?:/?$|\\?)`, "i");
 
@@ -62,9 +58,7 @@ function updateRegexp() {
 }
 
 function sendMessage({url, tabId}) {
-    if (rxHomeRepoPage.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "home-repo-page-loaded"});
-    } else if (rxIssueTab.test(url)) {
+    if (rxIssueTab.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "issue-tab-loaded"});
     } else if (rxPRTab.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});

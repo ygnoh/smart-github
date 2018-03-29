@@ -1,7 +1,5 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg.name === "home-repo-page-loaded") {
-        console.log("home repo page loaded");
-    } else if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-page-loaded") {
+    if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-page-loaded") {
         const oldIssueBtn = document.querySelector('a.btn[href$="/issues/new"]');
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
         if (!oldIssueBtn) {
