@@ -47,7 +47,18 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         const resetBtn = _createResetTemplateBtn();
         bottomArea.appendChild(resetBtn);
     } else if (msg.name === "new-pr-page-loaded") {
-        console.log("new pr page loaded");
+        const comparePlaceholder = document.querySelector(".compare-pr-placeholder");
+        const createPrBtn = comparePlaceholder.getElementsByTagName("button")[0];
+
+        const dropdownWrapper = _createDropdownWrapper();
+        const dropdown = _createDropdown();
+        const loadingMsg = _createLoadingMsg();
+
+        dropdown.appendChild(loadingMsg);
+        dropdownWrapper.append(createPrBtn, dropdown);
+
+        comparePlaceholder.prepend(dropdownWrapper);
+
     }
 });
 
