@@ -15,6 +15,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         }
 
         const dropdownWrapper = _createDropdownWrapper();
+        dropdownWrapper.classList.add("float-right");
         const dropdown = _createDropdown();
         const loadingMsg = _createLoadingMsg();
 
@@ -64,7 +65,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 
 function _createDropdownWrapper() {
     const dropdownWrapper = document.createElement("div");
-    dropdownWrapper.classList.add("sg-dropdown-wrapper", "float-right");
+    dropdownWrapper.classList.add("sg-dropdown-wrapper");
 
     return dropdownWrapper;
 }
