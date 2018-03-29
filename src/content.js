@@ -109,7 +109,10 @@ async function _fetchIssueTemplateData() {
     const token = await _fetchToken();
     const response = await _fetch({url, token});
 
-    return await _createTemplateData(response);
+    const data = await _createTemplateData(response);
+    data.issueData = true;
+
+    return data;
 }
 
 async function _fetchPRTemplateData() {
@@ -120,7 +123,10 @@ async function _fetchPRTemplateData() {
     const token = await _fetchToken();
     const response = await _fetch({url, token});
 
-    return await _createTemplateData(response);
+    const data = await _createTemplateData(response);
+    data.issueData = false;
+
+    return data;
 }
 
 async function _createTemplateData(response) {
@@ -217,11 +223,20 @@ function _createDropdownContents(data) {
     const {contents, newIssueUrl} = data;
     const templateNames = _extractTemplateNames(contents);
 
-    for (const tempName of templateNames) {
-        const href = `${newIssueUrl}?template=${tempName}.md&labels=${tempName}`;
-        const item = `<a href=${href}>${tempName}</span>`;
+    if (data.issueData) {
+        for (const tempName of templateNames) {
+            const href = `${newIssueUrl}?template=${tempName}.md&labels=${tempName}`;
+            const item = `<a href=${href}>${tempName}</span>`;
 
-        dropdownContents.innerHTML += item;
+            dropdownContents.innerHTML += item;
+        }
+    } else {
+        for (const tempName of templateNames) {
+            const href = `${newIssueUrl}?template=${tempName}.md&labels=${tempName}`;
+            const item = `<a href=${href}>${tempName}</span>`;
+
+            dropdownContents.innerHTML += item;
+        }
     }
 
     return dropdownContents;
