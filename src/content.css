@@ -1,11 +1,13 @@
-.sg-abs-right {
+.sg-bottom-right {
     position: absolute;
     right: 0;
+    top: 100%;
 }
 
-.sg-abs-left {
+.sg-bottom-left {
     position: absolute;
     left: 0;
+    top: 100%;
 }
 
 .sg-dropdown-btn {
