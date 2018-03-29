@@ -62,7 +62,9 @@ function updateRegexp() {
 }
 
 function sendMessage({url, tabId}) {
-    if (rxIssueTab.test(url)) {
+    if (rxHomeRepoPage.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "home-repo-page-loaded"});
+    } else if (rxIssueTab.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "issue-tab-loaded"});
     } else if (rxPRTab.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
