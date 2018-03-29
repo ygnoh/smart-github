@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         oldIssueBtn.remove();
         btnParent.appendChild(dropdownWrapper);
 
-        _fetchTemplateData().then(data => {
+        _fetchIssueTemplateData().then(data => {
             data.newIssueUrl = newIssueUrl;
 
             const dropdownContents = _createDropdownContents(data);
@@ -63,6 +63,10 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 
         comparePlaceholder.prepend(dropdownWrapper);
 
+        _fetchPRTemplateData().then(data => {
+            const dropdownContents = _createDropdownContents(data);
+            dropdown.replaceChild(dropdownContents, loadingMsg);
+        });
     }
 });
 
@@ -97,30 +101,29 @@ function _createLoadingMsg() {
     return loadingMsg;
 }
 
-async function _fetchTemplateData() {
+async function _fetchIssueTemplateData() {
     const {host, username, reponame} = _getApiInfo();
 
     // https://developer.github.com/v3/repos/contents/
     const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE`;
-
     const token = await _fetchToken();
+    const response = await _fetch({url, token});
 
-    const requestInit = {};
-    if (token) {
-        requestInit.headers = {
-            Authorization: `token ${token}`
-        };
-    }
+    return _createTemplateData(response);
+}
 
-    let response;
-    await fetch(url, requestInit)
-        .then(res => {
-            response = res;
-        })
-        .catch(err => {
-            console.error(err);
-        });
+async function _fetchPRTemplateData() {
+    const {host, username, reponame} = _getApiInfo();
 
+    // https://developer.github.com/v3/repos/contents/
+    const url = `${host}/repos/${username}/${reponame}/contents/.github/PULL_REQUEST_TEMPLATE`;
+    const token = await _fetchToken();
+    const response = await _fetch({url, token});
+
+    return await _createTemplateData(response);
+}
+
+async function _createTemplateData(response) {
     let templateData = {
         ok: response.ok,
         status: response.status
@@ -321,4 +324,19 @@ function _b64DecodeUnicode(str) {
 
 function _convertToSmallBtn(largeBtn) {
     largeBtn.classList.add("sg-small-btn");
+}
+
+function _fetch({url, token}) {
+    const requestInit = {};
+    if (token) {
+        requestInit.headers = {
+            Authorization: `token ${token}`
+        };
+    }
+
+    return new Promise((resolve, reject) => {
+        fetch(url, requestInit)
+            .then(resolve)
+            .catch(reject);
+    });
 }
