@@ -109,7 +109,7 @@ async function _fetchIssueTemplateData() {
     const token = await _fetchToken();
     const response = await _fetch({url, token});
 
-    return _createTemplateData(response);
+    return await _createTemplateData(response);
 }
 
 async function _fetchPRTemplateData() {
@@ -270,7 +270,7 @@ function _resetIssueBody() {
     }
 
     const templateName = location.search.match(/template=(.*?)\.md/i)[1];
-    _fetchIssueTemplateInfo(templateName).then(result => {
+    _fetchIssueTemplateFileInfo(templateName).then(result => {
         const issueBody = document.getElementById("issue_body");
         // base64 decoding
         const content = _b64DecodeUnicode(result.contents.content);
@@ -279,36 +279,14 @@ function _resetIssueBody() {
     });
 }
 
-async function _fetchIssueTemplateInfo(name) {
+async function _fetchIssueTemplateFileInfo(name) {
     const {host, username, reponame} = _getApiInfo();
     // https://developer.github.com/v3/repos/contents/#get-contents
     const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE/${name}.md`;
     const token = await _fetchToken();
+    const response = await _fetch({url, token});
 
-    const requestInit = {};
-    if (token) {
-        requestInit.headers = {
-            Authorization: `token ${token}`
-        };
-    }
-
-    let response;
-    await fetch(url, requestInit)
-        .then(res => {
-            response = res;
-        })
-        .catch(err => {
-            console.error(err);
-        });
-
-    let info = {
-        ok: response.ok,
-        status: response.status
-    };
-
-    info.contents = await _convertReadableStreamToJson(response);
-
-    return info;
+    return await _createTemplateData(response);
 }
 
 /**
