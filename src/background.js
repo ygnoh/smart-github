@@ -57,7 +57,7 @@ function updateRegexp() {
         rxIssueContentsPage = new RegExp(`^https?://(www\\.)?(?:${rxHosts})/.*?/issues/[0-9]+/?$`, "i");
 
         // 다음에 매칭된다: .../compare/{anything except /}...{anything except /}{anything}
-        rxNewPRPageFromPRTab = new RegExp(`^https?://(www\\.)?(?:${rxHosts})/.*?/compare/[^\/]+?\\.{3}[^\/]+`, "i");
+        rxNewPRPageFromPRTab = new RegExp(`^https?://(www\\.)?(?:${rxHosts})/.*?/compare/[^/]+?\\.{3}[^/]+`, "i");
     });
 }
 
