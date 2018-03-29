@@ -1,4 +1,5 @@
 // default regex that will never match anything
+let rxHomeRepoPage = /(?!)/;
 let rxIssueTab = /(?!)/;
 let rxPRTab = /(?!)/;
 let rxNewIssuePage = /(?!)/;
@@ -39,6 +40,9 @@ function fetchHosts() {
 function updateRegexp() {
     fetchHosts().then(hosts => {
         const rxHosts = hosts.join("|");
+
+        // 다음에 매칭된다: .../{anything except /}/{anything except /}, .../{anything except /}/{anything except /}/
+        rxHomeRepoPage = new RegExp(`^https?://(www\\.)?(?:${rxHosts})/[^/]+?/[^/]+?/?$`, "i");
 
         // 다음에 매칭된다: .../issues, .../issues/, .../issues?{anything}
         rxIssueTab = new RegExp(`^https?://(www\\.)?(?:${rxHosts})/.*?/issues(?:/?$|\\?)`, "i");
