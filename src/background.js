@@ -2,6 +2,7 @@
 let rxIssueTab = /(?!)/;
 let rxPRTab = /(?!)/;
 let rxNewIssuePage = /(?!)/;
+let rxNewPRPageFromPRTab = /(?!)/;
 let rxIssueContentsPage = /(?!)/;
 
 updateRegexp();
@@ -50,6 +51,9 @@ function updateRegexp() {
 
         // 다음에 매칭된다: .../issues/{any number}, .../issues/{any number}/
         rxIssueContentsPage = new RegExp(`^https?://(www\\.)?(?:${rxHosts})/.*?/issues/[0-9]+/?$`, "i");
+
+        // 다음에 매칭된다: .../compare/{anything except /}...{anything except /}{anything}
+        rxNewPRPageFromPRTab = new RegExp(`^https?://(www\\.)?(?:${rxHosts})/.*?/compare/[^\/]+?\\.{3}[^\/]+`, "i");
     });
 }
 
@@ -62,5 +66,7 @@ function sendMessage({url, tabId}) {
         chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
     } else if (rxIssueContentsPage.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "issue-contents-page-loaded"});
+    } else if (rxNewPRPageFromPRTab.test(url)) {
+        chrome.tabs.sendMessage(tabId, {name: "new-pr-page-loaded"});
     }
 }
