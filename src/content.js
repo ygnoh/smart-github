@@ -17,6 +17,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         const dropdownWrapper = _createDropdownWrapper();
         dropdownWrapper.classList.add("float-right");
         const dropdown = _createDropdown();
+        dropdown.classList.add("sg-abs-right");
         const loadingMsg = _createLoadingMsg();
 
         dropdown.appendChild(loadingMsg);
@@ -52,7 +53,9 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         const createPrBtn = comparePlaceholder.getElementsByTagName("button")[0];
 
         const dropdownWrapper = _createDropdownWrapper();
+        dropdownWrapper.classList.add("float-left");
         const dropdown = _createDropdown();
+        dropdown.classList.add("sg-abs-left");
         const loadingMsg = _createLoadingMsg();
 
         dropdown.appendChild(loadingMsg);
