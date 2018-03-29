@@ -232,7 +232,7 @@ function _createDropdownContents(data) {
         }
     } else {
         for (const tempName of templateNames) {
-            const href = `${newIssueUrl}?template=${tempName}.md&labels=${tempName}`;
+            const href = `?quick_pull=1&template=${tempName}.md&labels=${tempName}`;
             const item = `<a href=${href}>${tempName}</span>`;
 
             dropdownContents.innerHTML += item;
