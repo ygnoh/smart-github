@@ -46,6 +46,8 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 
         const resetBtn = _createResetTemplateBtn();
         bottomArea.appendChild(resetBtn);
+    } else if (msg.name === "new-pr-page-loaded") {
+        console.log("new pr page loaded");
     }
 });
 
