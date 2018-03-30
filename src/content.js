@@ -15,7 +15,9 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         }
 
         const dropdownWrapper = _createDropdownWrapper();
+        dropdownWrapper.classList.add("float-right");
         const dropdown = _createDropdown();
+        dropdown.classList.add("sg-bottom-right");
         const loadingMsg = _createLoadingMsg();
 
         dropdown.appendChild(loadingMsg);
@@ -24,7 +26,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         oldIssueBtn.remove();
         btnParent.appendChild(dropdownWrapper);
 
-        _fetchTemplateData().then(data => {
+        _fetchIssueTemplateData().then(data => {
             data.newIssueUrl = newIssueUrl;
 
             const dropdownContents = _createDropdownContents(data);
@@ -50,29 +52,49 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         const submitBtn = bottomArea.getElementsByClassName("btn-primary")[0];
         const templateLabelKey = `templateLabel(${location.host})`;
 
-        submitBtn.addEventListener('click', () => {
+        submitBtn.addEventListener("click", () => {
             const templateName = location.search.match(/template=(.*?)\.md/i)[1];
             const labels = document.getElementsByClassName('labels')[0].children;
-            const activeLabels = [];
-            for(let label of labels) {
-                activeLabels.push(label.innerText);
+          
+            const currentLabels = [];
+            for (const label of labels) {
+                currentLabels.push(label.innerText);
             }
         
             chrome.storage.sync.get(templateLabelKey, result => {
                 chrome.storage.sync.set({
                     [templateLabelKey]: {
                         ...result[templateLabelKey],
-                        [templateName]: activeLabels
+                        [templateName]: currentLabels
                     }
                 });
-            })
+            });
+        });
+    } else if (msg.name === "new-pr-page-loaded") {
+        const comparePlaceholder = document.querySelector(".compare-pr-placeholder");
+        const createPrBtn = comparePlaceholder.getElementsByTagName("button")[0];
+
+        const dropdownWrapper = _createDropdownWrapper();
+        dropdownWrapper.classList.add("float-left");
+        const dropdown = _createDropdown();
+        dropdown.classList.add("sg-bottom-left");
+        const loadingMsg = _createLoadingMsg();
+
+        dropdown.appendChild(loadingMsg);
+        dropdownWrapper.append(createPrBtn, dropdown);
+
+        comparePlaceholder.prepend(dropdownWrapper);
+
+        _fetchPRTemplateData().then(data => {
+            const dropdownContents = _createDropdownContents(data);
+            dropdown.replaceChild(dropdownContents, loadingMsg);
         });
     }
 });
 
 function _createDropdownWrapper() {
     const dropdownWrapper = document.createElement("div");
-    dropdownWrapper.classList.add("sg-dropdown-wrapper", "float-right");
+    dropdownWrapper.classList.add("sg-dropdown-wrapper");
 
     return dropdownWrapper;
 }
@@ -87,7 +109,7 @@ function _createNewIssueBtn(href = "#") {
 }
 
 function _createDropdown() {
-    const dropdown= document.createElement("div");
+    const dropdown = document.createElement("div");
     dropdown.classList.add("sg-dropdown");
 
     return dropdown;
@@ -101,30 +123,35 @@ function _createLoadingMsg() {
     return loadingMsg;
 }
 
-async function _fetchTemplateData() {
+async function _fetchIssueTemplateData() {
     const {host, username, reponame} = _getApiInfo();
 
     // https://developer.github.com/v3/repos/contents/
     const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE`;
-
     const token = await _fetchToken();
+    const response = await _fetch({url, token});
 
-    const requestInit = {};
-    if (token) {
-        requestInit.headers = {
-            Authorization: `token ${token}`
-        };
-    }
+    const data = await _createTemplateData(response);
+    data.issueData = true;
 
-    let response;
-    await fetch(url, requestInit)
-        .then(res => {
-            response = res;
-        })
-        .catch(err => {
-            console.error(err);
-        });
+    return data;
+}
 
+async function _fetchPRTemplateData() {
+    const {host, username, reponame} = _getApiInfo();
+
+    // https://developer.github.com/v3/repos/contents/
+    const url = `${host}/repos/${username}/${reponame}/contents/.github/PULL_REQUEST_TEMPLATE`;
+    const token = await _fetchToken();
+    const response = await _fetch({url, token});
+
+    const data = await _createTemplateData(response);
+    data.issueData = false;
+
+    return data;
+}
+
+async function _createTemplateData(response) {
     let templateData = {
         ok: response.ok,
         status: response.status
@@ -228,14 +255,23 @@ function _createDropdownContents(data) {
     const {contents, newIssueUrl, labels} = data;
     const templateNames = _extractTemplateNames(contents);
 
-    
-    for (const tempName of templateNames) {
-        const href = labels[tempName]?
-            `${newIssueUrl}?template=${tempName}.md&labels=${labels[tempName].join(',')}`
-            : `${newIssueUrl}?template=${tempName}.md`
-        const item = `<a href=${href}>${tempName}</span>`;
+    if (data.issueData) {
+        for (const tempName of templateNames) {
+            const href = labels[tempName] ?
+                `${newIssueUrl}?template=${tempName}.md&labels=${labels[tempName].join(',')}`
+                : `${newIssueUrl}?template=${tempName}.md`;
+            const href = `${newIssueUrl}?template=${tempName}.md&labels=${tempName}`;
+            const item = `<a href=${href}>${tempName}</span>`;
 
-        dropdownContents.innerHTML += item;
+            dropdownContents.innerHTML += item;
+        }
+    } else {
+        for (const tempName of templateNames) {
+            const href = `?quick_pull=1&template=${tempName}.md&labels=${tempName}`;
+            const item = `<a href=${href}>${tempName}</span>`;
+
+            dropdownContents.innerHTML += item;
+        }
     }
 
     return dropdownContents;
@@ -284,7 +320,7 @@ function _resetIssueBody() {
     }
 
     const templateName = location.search.match(/template=(.*?)\.md/i)[1];
-    _fetchIssueTemplateInfo(templateName).then(result => {
+    _fetchIssueTemplateFileInfo(templateName).then(result => {
         const issueBody = document.getElementById("issue_body");
         // base64 decoding
         const content = _b64DecodeUnicode(result.contents.content);
@@ -293,36 +329,14 @@ function _resetIssueBody() {
     });
 }
 
-async function _fetchIssueTemplateInfo(name) {
+async function _fetchIssueTemplateFileInfo(name) {
     const {host, username, reponame} = _getApiInfo();
     // https://developer.github.com/v3/repos/contents/#get-contents
     const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE/${name}.md`;
     const token = await _fetchToken();
+    const response = await _fetch({url, token});
 
-    const requestInit = {};
-    if (token) {
-        requestInit.headers = {
-            Authorization: `token ${token}`
-        };
-    }
-
-    let response;
-    await fetch(url, requestInit)
-        .then(res => {
-            response = res;
-        })
-        .catch(err => {
-            console.error(err);
-        });
-
-    let info = {
-        ok: response.ok,
-        status: response.status
-    };
-
-    info.contents = await _convertReadableStreamToJson(response);
-
-    return info;
+    return await _createTemplateData(response);
 }
 
 /**
@@ -338,4 +352,19 @@ function _b64DecodeUnicode(str) {
 
 function _convertToSmallBtn(largeBtn) {
     largeBtn.classList.add("sg-small-btn");
+}
+
+function _fetch({url, token}) {
+    const requestInit = {};
+    if (token) {
+        requestInit.headers = {
+            Authorization: `token ${token}`
+        };
+    }
+
+    return new Promise((resolve, reject) => {
+        fetch(url, requestInit)
+            .then(resolve)
+            .catch(reject);
+    });
 }
