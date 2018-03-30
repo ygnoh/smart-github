@@ -172,7 +172,7 @@ function _getTemplateLabels() {
     return new Promise((resolve, reject) => {
         const templateLabelKey = `templateLabel(${location.host})`;
         chrome.storage.sync.get([templateLabelKey], result => {
-            resolve(result[templateLabelKey]);
+            resolve(result[templateLabelKey] || {});
         });
     });
 }
@@ -260,7 +260,6 @@ function _createDropdownContents(data) {
             const href = labels[tempName] ?
                 `${newIssueUrl}?template=${tempName}.md&labels=${labels[tempName].join(',')}`
                 : `${newIssueUrl}?template=${tempName}.md`;
-            const href = `${newIssueUrl}?template=${tempName}.md&labels=${tempName}`;
             const item = `<a href=${href}>${tempName}</span>`;
 
             dropdownContents.innerHTML += item;
