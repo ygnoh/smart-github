@@ -48,6 +48,28 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 
         const resetBtn = _createResetTemplateBtn();
         bottomArea.appendChild(resetBtn);
+
+        const submitBtn = bottomArea.getElementsByClassName("btn-primary")[0];
+        const templateLabelKey = `templateLabel(${location.host})`;
+
+        submitBtn.addEventListener("click", () => {
+            const templateName = location.search.match(/template=(.*?)\.md/i)[1];
+            const labels = document.getElementsByClassName('labels')[0].children;
+          
+            const currentLabels = [];
+            for (const label of labels) {
+                currentLabels.push(label.innerText);
+            }
+        
+            chrome.storage.sync.get(templateLabelKey, result => {
+                chrome.storage.sync.set({
+                    [templateLabelKey]: {
+                        ...result[templateLabelKey],
+                        [templateName]: currentLabels
+                    }
+                });
+            });
+        });
     } else if (msg.name === "new-pr-page-loaded") {
         const comparePlaceholder = document.querySelector(".compare-pr-placeholder");
         const createPrBtn = comparePlaceholder.getElementsByTagName("button")[0];
@@ -87,7 +109,7 @@ function _createNewIssueBtn(href = "#") {
 }
 
 function _createDropdown() {
-    const dropdown= document.createElement("div");
+    const dropdown = document.createElement("div");
     dropdown.classList.add("sg-dropdown");
 
     return dropdown;
@@ -138,11 +160,21 @@ async function _createTemplateData(response) {
     // TODO: 어떨 땐 JSON 어떨 땐 DOM? 일관성 필요함
     if (response.ok) {
         templateData.contents = await _convertReadableStreamToJson(response);
+        templateData.labels = await _getTemplateLabels();
     } else {
         templateData.contents = _getContentsOnError(response.status);
     }
 
     return templateData;
+}
+
+function _getTemplateLabels() {
+    return new Promise((resolve, reject) => {
+        const templateLabelKey = `templateLabel(${location.host})`;
+        chrome.storage.sync.get([templateLabelKey], result => {
+            resolve(result[templateLabelKey] || {});
+        });
+    });
 }
 
 function _getApiInfo() {
@@ -220,12 +252,14 @@ function _createDropdownContents(data) {
         return dropdownContents;
     }
 
-    const {contents, newIssueUrl} = data;
+    const {contents, newIssueUrl, labels} = data;
     const templateNames = _extractTemplateNames(contents);
 
     if (data.issueData) {
         for (const tempName of templateNames) {
-            const href = `${newIssueUrl}?template=${tempName}.md&labels=${tempName}`;
+            const href = labels[tempName] ?
+                `${newIssueUrl}?template=${tempName}.md&labels=${labels[tempName].join(',')}`
+                : `${newIssueUrl}?template=${tempName}.md`;
             const item = `<a href=${href}>${tempName}</span>`;
 
             dropdownContents.innerHTML += item;
