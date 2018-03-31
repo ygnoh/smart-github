@@ -1,6 +1,6 @@
 
 # Smart Github - Open Source
-#### We use [smart-github](). We highly recommend using the extension to contribute to us.
+#### 이 레파지토리는 [smart-github]()을 사용합니다. contribute하기 위해서는 이 익스텐션을 사용하길 권장합니다.
 
 Smart Github은 github의 기능을 더 확장시켜주는 크롬 익스텐션입니다.
 
