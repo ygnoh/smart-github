@@ -257,9 +257,13 @@ function _createDropdownContents(data) {
 
     if (data.issueData) {
         for (const tempName of templateNames) {
-            const href = labels[tempName] ?
-                `${newIssueUrl}?template=${tempName}.md&labels=${labels[tempName].join(',')}`
-                : `${newIssueUrl}?template=${tempName}.md`;
+            let href = `${newIssueUrl}?template=${tempName}.md`;
+
+            if (labels[tempName]) {
+                const encodedLabels = encodeURIComponent(labels[tempName].join(","));
+                href = `${newIssueUrl}?template=${tempName}.md&labels=${encodedLabels}`;
+            }
+
             const item = `<a href=${href}>${tempName}</a>`;
 
             dropdownContents.innerHTML += item;
