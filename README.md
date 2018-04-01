@@ -1,6 +1,7 @@
 # Smart Github - Open Source
-Smart Github은 github의 기능을 더 확장시켜주는 크롬 익스텐션입니다.
-#### 이 레파지토리는 [smart-github]()을 사용합니다. contribute하기 위해서는 이 익스텐션을 사용하길 권장합니다.
+Smart Github은 Github의 기능을 더 확장시켜주는 크롬 익스텐션입니다.
+
+체험을 해보시고 싶은 분은 [여기](https://github.com/ygnoh/github-template-extension)에 저장소를 마련해두었으니, 익스텐션 설치 후 체험 해보세요!
 
 ## Features
 ### 멀티 템플릿
@@ -26,6 +27,3 @@ Smart Github은 여러분의 저장소 위에서 동작합니다. 이는 여러�
 github.com이 아닌, enterprise(기업용) 버전을 사용할 경우 아래처럼 호스트를 등록 해주세요 :)
 
 <img src="https://user-images.githubusercontent.com/13075245/38159257-b65afeb0-34df-11e8-9c3d-8c4f50770514.gif" width="400">
-
-## Want to experience
-체험을 해보시고 싶은 분은 [여기](https://github.com/ygnoh/github-template-extension)에 저장소를 마련해두었으니, 익스텐션 설치 후  해보세요!
