@@ -3,6 +3,8 @@ Smart Github은 Github의 기능을 더 확장시켜주는 **오픈 소스** 크
 
 체험을 해보시고 싶은 분은 [여기](https://github.com/ygnoh/github-template-extension)에 저장소를 마련해두었으니, 익스텐션 설치 후 자유롭게 체험 해보세요!
 
+*Read this in other languages: [한국어](README.md), [English](README.en.md)*
+
 ## Features
 ### 멀티 템플릿
   * 이슈/풀리퀘스트에 대해서 멀티 템플릿 기능을 제공합니다.
