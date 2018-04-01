@@ -1,7 +1,7 @@
 # Smart Github - Open Source
 Smart Github은 Github의 기능을 더 확장시켜주는 크롬 익스텐션입니다.
 
-체험을 해보시고 싶은 분은 [여기](https://github.com/ygnoh/github-template-extension)에 저장소를 마련해두었으니, 익스텐션 설치 후 체험 해보세요!
+체험을 해보시고 싶은 분은 [여기](https://github.com/ygnoh/github-template-extension)에 저장소를 마련해두었으니, 익스텐션 설치 후 자유롭게 체험 해보세요!
 
 ## Features
 ### 멀티 템플릿
