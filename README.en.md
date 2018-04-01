@@ -1,5 +1,5 @@
 # Smart Github - Open Source
-Smart Github is a **open source** chrome extension to upgrade your github's functionality.
+Smart Github is an **open source** chrome extension to upgrade your github's functionality.
 
 If you want to experience this, [Here](https://github.com/ygnoh/github-template-extension) is a sample repository for you to experience. After installing this extension, try it!
 
@@ -21,9 +21,9 @@ If you want to experience this, [Here](https://github.com/ygnoh/github-template-
 3. Finish!
 
 ## Token?
-Smart Github은 여러분의 저장소 위에서 동작합니다. 이는 여러분 저장소에 대한 접근을 필요로 합니다. 공개 저장소는 자유롭게 [Github API](https://developer.github.com/v3/)로 접근이 가능하지만, **비공개 저장소 혹은 Enterprise 버전의 github에 대해서는 접근이 제한됩니다.**
+Smart Github works on your repository. This means it needs an access to your repository. A public repository can be accessed using [Github API](https://developer.github.com/v3/), but **a private repository or Github Enterprise is restricted.**
 
-그래서 **동작을 위해 최소한의 토큰이 필요합니다!** 토큰의 접근 범위에 대한 자세한 정보는 Github의 [이 글](https://developer.github.com/apps/building-oauth-apps/scopes-for-oauth-apps/)에서 확인하실 수 있습니다.
+So we need **a minimal token to work this extension.** If you want to know about token access range, See [this from github](https://developer.github.com/apps/building-oauth-apps/scopes-for-oauth-apps/).
 
 ## Enterprise
 If you use a Github Enterprise, you should register your host like this :)
