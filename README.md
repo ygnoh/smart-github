@@ -17,6 +17,8 @@ Smart Github은 github의 기능을 더 확장시켜주는 크롬 익스텐션�
 > `.md` 파일의 이름이 드랍다운에서 나타나는 각 템플릿의 이름이 됩니다.
 3. 끝났습니다! 이제 사용해보세요!
 
+## Token?
+Smart Github은 여러분의 저장소 위에서 동작합니다. 이는 여러분 저장소에 대한 접근을 필요로 합니다. 공개 저장소는 자유롭게 [Github API](https://developer.github.com/v3/)로 접근이 가능하지만, **비공개 저장소 혹은 Enterprise 버전의 github에 대해서는 접근이 제한됩니다.** 그래서 접근을 위해 토큰이 필요합니다! 자세한 토큰에 대한 정보는 Github에서 제공해주는 [이 글](https://developer.github.com/apps/building-oauth-apps/scopes-for-oauth-apps/)을 통해서 확인해보실 수 있습니다. 참고로, 불필요한 토큰을 요구하지 않으므로 걱정 않으셔도 됩니다 :)
 
 ## Enterprise
 github.com이 아닌, enterprise(기업용) 버전을 사용할 경우 아래처럼 호스트를 등록 해주세요 :)
