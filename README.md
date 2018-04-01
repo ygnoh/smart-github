@@ -19,6 +19,6 @@ Smart Github은 github의 기능을 더 확장시켜주는 크롬 익스텐션�
 
 
 ## Enterprise
-github.com이 아닌, enterprise(기업용) 버전을 사용할 경우 아래처럼 설정해주세요 :)
+github.com이 아닌, enterprise(기업용) 버전을 사용할 경우 아래처럼 호스트를 등록 해주세요 :)
 
 <img src="https://user-images.githubusercontent.com/13075245/38159257-b65afeb0-34df-11e8-9c3d-8c4f50770514.gif" width="400">
