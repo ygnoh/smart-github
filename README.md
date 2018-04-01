@@ -12,7 +12,7 @@ Smart Github은 Github의 기능을 더 확장시켜주는 크롬 익스텐션�
 
 ## How to use
 ### 멀티 템플릿
-1. 사용하고자 하는 레파지토리의 루트 경로에 `.github/ISSUE_TEMPLATE/` 디렉토리를 만들어주세요.
+1. 사용하고자 하는 저장소의 루트 경로에 `.github/ISSUE_TEMPLATE/` 디렉토리를 만들어주세요.
 > 풀 리퀘스트 템플릿의 경우에는 `.github/PULL_REQUEST_TEMPLATE/` 디렉토리를 만들어주세요.
 2. 해당 디렉토리 안에 템플릿으로 사용될 `.md` 파일을 넣어주세요
 > `.md` 파일의 이름이 드랍다운에서 나타나는 각 템플릿의 이름이 됩니다.
