@@ -9,6 +9,11 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         newIssueBtn.classList.add("sg-dropdown-btn");
         const btnParent = newIssueBtn.parentNode;
 
+        // 뒤로 가기 할 경우 태그가 추가 생성되므로, 이미 생성된 경우 방어 처리
+        if (btnParent.classList.contains("sg-dropdown-wrapper")) {
+            return;
+        }
+
         if (msg.name === "issue-contents-page-loaded") {
             _convertToSmallBtn(newIssueBtn);
         }
