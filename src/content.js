@@ -1,17 +1,16 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-page-loaded") {
-        const oldIssueBtn = document.querySelector('a.btn[href$="/issues/new"]');
+        const newIssueBtn = document.querySelector('a.btn[href$="/issues/new"]');
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
-        if (!oldIssueBtn) {
+        if (!newIssueBtn) {
             return;
         }
 
-        const btnParent = oldIssueBtn.parentNode;
-        const newIssueUrl = oldIssueBtn.getAttribute("href");
-        const advancedIssueBtn = _createNewIssueBtn(newIssueUrl);
+        newIssueBtn.classList.add("sg-dropdown-btn");
+        const btnParent = newIssueBtn.parentNode;
 
         if (msg.name === "issue-contents-page-loaded") {
-            _convertToSmallBtn(advancedIssueBtn);
+            _convertToSmallBtn(newIssueBtn);
         }
 
         const dropdownWrapper = _createDropdownWrapper();
@@ -21,13 +20,12 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         const loadingMsg = _createLoadingMsg();
 
         dropdown.appendChild(loadingMsg);
-        dropdownWrapper.append(advancedIssueBtn, dropdown);
+        dropdownWrapper.append(newIssueBtn, dropdown);
 
-        oldIssueBtn.remove();
         btnParent.appendChild(dropdownWrapper);
 
         _fetchIssueTemplateData().then(data => {
-            data.newIssueUrl = newIssueUrl;
+            data.newIssueUrl = newIssueBtn.getAttribute("href");
 
             const dropdownContents = _createDropdownContents(data);
             dropdown.replaceChild(dropdownContents, loadingMsg);
@@ -97,15 +95,6 @@ function _createDropdownWrapper() {
     dropdownWrapper.classList.add("sg-dropdown-wrapper");
 
     return dropdownWrapper;
-}
-
-function _createNewIssueBtn(href = "#") {
-    const newIssueBtn = document.createElement("a");
-    newIssueBtn.classList.add("sg-dropdown-btn");
-    newIssueBtn.href = href;
-    newIssueBtn.innerHTML = "New issue";
-
-    return newIssueBtn;
 }
 
 function _createDropdown() {
