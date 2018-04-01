@@ -260,14 +260,14 @@ function _createDropdownContents(data) {
             const href = labels[tempName] ?
                 `${newIssueUrl}?template=${tempName}.md&labels=${labels[tempName].join(',')}`
                 : `${newIssueUrl}?template=${tempName}.md`;
-            const item = `<a href=${href}>${tempName}</span>`;
+            const item = `<a href=${href}>${tempName}</a>`;
 
             dropdownContents.innerHTML += item;
         }
     } else {
         for (const tempName of templateNames) {
             const href = `?quick_pull=1&template=${tempName}.md&labels=${tempName}`;
-            const item = `<a href=${href}>${tempName}</span>`;
+            const item = `<a href=${href}>${tempName}</a>`;
 
             dropdownContents.innerHTML += item;
         }
