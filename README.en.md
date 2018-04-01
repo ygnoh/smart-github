@@ -1,7 +1,7 @@
 # Smart Github - Open Source
 Smart Github is a **open source** chrome extension to upgrade your github's functionality.
 
-If you want to experience this, [Here](https://github.com/ygnoh/github-template-extension) is a sample repository to experience. After installing this extension, try it!
+If you want to experience this, [Here](https://github.com/ygnoh/github-template-extension) is a sample repository for you to experience. After installing this extension, try it!
 
 *Read this in other languages: [한국어](README.md), [English](README.en.md)*
 
