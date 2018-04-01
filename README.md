@@ -6,7 +6,8 @@ Smart Github은 github의 기능을 더 확장시켜주는 크롬 익스텐션�
 ### 멀티 템플릿
   * 이슈/풀리퀘스트에 대해서 멀티 템플릿 기능을 제공합니다.
   * 사용자가 최근에 사용한 label들을 기억하고 재 작성 시 자동으로 삽입하여 줍니다.
-![template](https://user-images.githubusercontent.com/13075245/38159156-9903fe90-34dd-11e8-865d-a9fee8315ff2.gif)
+
+<img src="https://user-images.githubusercontent.com/13075245/38159156-9903fe90-34dd-11e8-865d-a9fee8315ff2.gif" width="800">
 
 ## How to use
 ### 멀티 템플릿
@@ -19,4 +20,5 @@ Smart Github은 github의 기능을 더 확장시켜주는 크롬 익스텐션�
 
 ## Enterprise
 github.com이 아닌, enterprise(기업용) 버전을 사용할 경우 아래처럼 설정해주세요 :)
-![enterprise](https://user-images.githubusercontent.com/13075245/38159257-b65afeb0-34df-11e8-9c3d-8c4f50770514.gif)
+
+<img src="https://user-images.githubusercontent.com/13075245/38159257-b65afeb0-34df-11e8-9c3d-8c4f50770514.gif" width="400">
