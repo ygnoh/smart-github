@@ -12,7 +12,7 @@
 
     "build-popup-js": "parcel build ./src/popup.js -o popup.min.js --no-cache",
     "build-popup-css": "parcel build ./src/popup.css -o popup.min.css --no-cache",
-    "build-popup": "npm run build-popup-js && npm run build-popup-css && cp ./src/popup.html ./dist/popup.html",
+    "build-popup": "npm run build-popup-js && npm run build-popup-css",
 
     "build": "npm run build-background && npm run build-content && npm run build-popup",
     "clean": "rm -rf ./dist/*.min.*",
