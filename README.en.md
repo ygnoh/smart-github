@@ -7,7 +7,7 @@ If you want to experience this, [Here](https://github.com/ygnoh/github-template-
 
 ## Features
 ### Multi templates
-  * This provides multi templates for issues ~/pull request~.
+  * This provides multi templates for issues ~/pull request~.
   * This adds labels you recently used automatically when you create a new issue ~/pull request~.
 
 <img src="https://user-images.githubusercontent.com/13075245/38159156-9903fe90-34dd-11e8-865d-a9fee8315ff2.gif" width="800">
