@@ -1,9 +1,9 @@
 {
     "manifest_version": 2,
-    "name": "SmartGithub",
+    "name": "__MSG_extensionName__",
     "version": "1.0",
 
-    "description": "Make your github repo smarter.",
+    "description": "__MSG_extensionDescription__",
 
     "browser_action": {
         "default_popup": "popup.html",
@@ -35,6 +35,8 @@
         "webNavigation",
         "storage"
     ],
+
+    "default_locale": "en",
 
     "author": "yonggoo.noh@gmail.com",
     "homepage_url": "https://github.com/ygnoh/smart-github"
