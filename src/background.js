@@ -67,6 +67,7 @@ function sendMessage({url, tabId}) {
     } else if (rxIssueContentsPage.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "issue-contents-page-loaded"});
     } else if (rxNewPRPageFromPRTab.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "new-pr-page-loaded"});
+        // [#62] 동작 임시 제한
+        // chrome.tabs.sendMessage(tabId, {name: "new-pr-page-loaded"});
     }
 }
