@@ -66,10 +66,10 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         
             chrome.storage.sync.get(templateLabelKey, result => {
                 chrome.storage.sync.set({
-                    [templateLabelKey]: {
-                        ...result[templateLabelKey],
-                        [templateName]: currentLabels
-                    }
+                    [templateLabelKey]: Object.assign({},
+                        result[templateLabelKey],
+                        {[templateName]: currentLabels}
+                    )
                 });
             });
         });
