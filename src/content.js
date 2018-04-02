@@ -112,7 +112,7 @@ function _createDropdown() {
 function _createLoadingMsg() {
     const loadingMsg = document.createElement("a");
     loadingMsg.href = "#";
-    loadingMsg.innerHTML = "Loading...";
+    loadingMsg.innerHTML = chrome.i18n.getMessage("loading");
 
     return loadingMsg;
 }
@@ -208,19 +208,23 @@ async function _convertReadableStreamToJson(res) {
 function _getContentsOnError(status) {
     switch (status) {
         case 401:
-            return `현재 사용하시는 토큰이 유효하지 않습니다. ` +
-                `<a class="sg-new-token" href="${_getTokenListUrl()}" target="_blank">이 링크</a>를 ` +
-                `통해서 이전 <strong>SmartGithub</strong> 토큰을 지운 후 ` +
-                `<a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">여기서 다시 생성</a> ` +
-                `해주세요! 그리고, 아래에 붙여 넣어주세요. ` +
-                `<input id="sg-token" type="text" placeholder="이 곳에 토큰을 넣어주세요" autocomplete="off">`;
+            return `${chrome.i18n.getMessage("401error_1")}<br>` +
+                `1. <a class="sg-new-token" href="${_getTokenListUrl()}" target="_blank">` +
+                `${chrome.i18n.getMessage("401error_2")}</a><br>` +
+                `2. <a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">` +
+                `${chrome.i18n.getMessage("401error_3")}</a><br>` +
+                `3. ${chrome.i18n.getMessage("401error_4")}<br>` +
+                `<input id="sg-token" type="text"` +
+                `placeholder="${chrome.i18n.getMessage("tokenPlaceholder")}" autocomplete="off">`;
         case 404:
-            return `.github/ISSUE_TEMPLATE 디렉토리가 존재하지 않거나, 비공개 저장소에서 사용할 토큰이 없습니다. ` +
-                `<a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">이 링크</a>를 ` +
-                `통해서 생성하고, 아래에 붙여 넣어주세요. ` +
-                `<input id="sg-token" type="text" placeholder="이 곳에 토큰을 넣어주세요" autocomplete="off">`;
+            return `${chrome.i18n.getMessage("404error_1")}<br>` +
+                `1. <a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">` +
+                `${chrome.i18n.getMessage("404error_2")}</a><br>` +
+                `2. ${chrome.i18n.getMessage("404error_3")}<br>` +
+                `<input id="sg-token" type="text"` + 
+                `placeholder="${chrome.i18n.getMessage("tokenPlaceholder")}" autocomplete="off">`;
         default:
-            return "Unknown error occurs.";
+            return chrome.i18n.getMessage("unknownError");
     }
 }
 
@@ -277,7 +281,7 @@ function _createDropdownContents(data) {
 function _createSaveTokenBtn() {
     const savebtn = document.createElement("button");
     savebtn.addEventListener("click", _saveToken);
-    savebtn.innerHTML = "저장";
+    savebtn.innerHTML = chrome.i18n.getMessage("save");
 
     return savebtn;
 }
@@ -286,7 +290,7 @@ function _saveToken() {
     const tokenKey = `sg-token(${location.host})`;
     const token = document.getElementById("sg-token").value;
     chrome.storage.sync.set({[tokenKey]: token}, () => {
-        alert("토큰이 성공적으로 저장되었습니다.");
+        alert(chrome.i18n.getMessage("tokenSaved"));
         location.reload();
     });
 }
@@ -305,14 +309,14 @@ function _extractTemplateNames(contents) {
 function _createResetTemplateBtn() {
     const resetBtn = document.createElement("a");
     resetBtn.classList.add("btn", "sg-reset-btn");
-    resetBtn.innerHTML = "Reset to template";
+    resetBtn.innerHTML = chrome.i18n.getMessage("resetToTemplate");
     resetBtn.addEventListener("click", _resetIssueBody);
 
     return resetBtn;
 }
 
 function _resetIssueBody() {
-    if (!window.confirm("정말 리셋하시겠습니까?")) {
+    if (!window.confirm(chrome.i18n.getMessage("confirmReset"))) {
         return;
     }
 

@@ -1,0 +1,50 @@
+{
+    "extensionName": {
+        "message": "Smart Github"
+    },
+    "extensionDescription": {
+        "message": "Make your github smarter."
+    },
+    "save": {
+        "message": "Save"
+    },
+    "loading": {
+        "message": "loading..."
+    },
+    "tokenSaved": {
+        "message": "The token has been saved successfully."
+    },
+    "confirmReset": {
+        "message": "Are you sure you want to reset?"
+    },
+    "resetToTemplate": {
+        "message": "Reset to template"
+    },
+    "unknownError": {
+        "message": "Unknown error occurs."
+    },
+    "401error_1": {
+        "message": "Your token is invalid."
+    },
+    "401error_2": {
+        "message": "Remove the previous token,"
+    },
+    "401error_3": {
+        "message": "re-create a token,"
+    },
+    "401error_4": {
+        "message": "and paste it below."
+    },
+    "404error_1": {
+        "message": "You have no template or token for this repository."
+    },
+    "404error_2": {
+        "message": "Create a token here"
+    },
+    "404error_3": {
+        "message": "and paste it below."
+    },
+    "tokenPlaceholder": {
+        "message": "Paste a token here."
+    }
+}
