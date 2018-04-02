@@ -88,3 +88,7 @@
     line-height: 20px;
     margin-left: 5px;
 }
+
+.form-actions a.btn.sg-reset-btn {
+    margin-right: 10px;
+}
