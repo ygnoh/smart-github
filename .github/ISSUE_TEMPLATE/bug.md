@@ -1,10 +1,26 @@
-## 설명
-가능한 자세히 적어주세요. 사진을 첨부해주시면 더 좋습니다.
+## 현상(Explain your situation)
+<!-- Required -->
 
-## 재현 스텝
-1. 이런 행동을 하고
-2. 이렇게 하면
-3. A가 된다.
 
-## 기대 결과
-B가 되어야 한다.
+## 재현 스텝(Steps to reproduce)
+<!-- Required -->
+1.
+2.
+3.
+4.
+
+## 기대 결과(Expected behavior)
+<!-- Required -->
+
+
+## 실제 결과(Current behavior)
+<!-- Required -->
+
+
+## 참고 사진(Screenshots)
+<!-- Optional -->
+
+
+## 참고 사항(Other information)
+<!-- Optional -->
+

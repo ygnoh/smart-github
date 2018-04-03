@@ -1,5 +1,11 @@
-## 내용
-버튼 색이 바뀌었으면 좋겠다.
+## 제안 사항(Suggestion)
+<!-- Required -->
 
-## 이유
-적록색맹인 사람들은 구분하기 어렵다.
+
+## 필요성(Necessity)
+<!-- Required -->
+
+
+## 기대 효과(Expectancy effects)
+<!-- Required -->
+
