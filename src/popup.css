@@ -19,22 +19,31 @@ a {
 /* header */
 .sg-popup-header {
     border-bottom: 2px solid #cacdda;
-    line-height: 30px;
+    padding-bottom: 2px;
+    line-height: 32px;
+    display: table;
+}
+
+.sg-logo-icon {
+    display: table-cell;
 }
 
 .sg-popup-header ul {
     list-style: none;
 }
 
-.sg-logo {
+.sg-logo-text {
     font-size: 22px;
     font-family: 'Ubuntu', sans-serif;
     letter-spacing: -0.5px;
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .sg-menu-items {
     display: block;
     float: right;
+    margin-left: 7px;
 }
 
 .sg-menu-item {
