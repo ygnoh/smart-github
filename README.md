@@ -1,3 +1,7 @@
+<div align="center">
+ <img width="200" height="200" src="src/icons/logo128.png">
+</div>
+
 # Smart Github - Open Source
 Smart Github은 Github의 기능을 더 확장시켜주는 **오픈 소스** 크롬 익스텐션입니다.
 
