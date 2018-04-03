@@ -34,3 +34,6 @@ So we need **a minimal token to work this extension.** If you want to know about
 If you use a Github Enterprise, you should register your host like this :)
 
 <img src="https://user-images.githubusercontent.com/13075245/38263740-d40272f8-37ab-11e8-935b-63f708fe2500.gif" width="400">
+
+## License
+Smart Github is [AGPL-3.0 licensed](LICENSE).
