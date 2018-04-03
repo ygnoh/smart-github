@@ -1,5 +1,7 @@
 <div align="center">
- <img width="200" height="200" src="src/icons/logo128.png">
+ <a href="https://github.com/ygnoh/smart-github">
+  <img width="200" height="200" src="src/icons/logo128.png">
+ </a>
 </div>
 
 # Smart Github - Open Source
