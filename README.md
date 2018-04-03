@@ -36,4 +36,4 @@ github.com이 아닌, enterprise(기업용) 버전을 사용할 경우 아래처
 <img src="https://user-images.githubusercontent.com/13075245/38263740-d40272f8-37ab-11e8-935b-63f708fe2500.gif" width="400">
 
 ## License
-Smart Github은 [AGPL 3.0](LICENSE) 을 따릅니다.
+Smart Github은 [AGPL-3.0](LICENSE) 을 따릅니다.
