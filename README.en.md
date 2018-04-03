@@ -1,3 +1,9 @@
+<div align="center">
+ <a href="https://github.com/ygnoh/smart-github">
+  <img src="src/icons/logo128.png">
+ </a>
+</div>
+
 # Smart Github - Open Source
 Smart Github is an **open source** chrome extension to upgrade your github's functionality.
 
@@ -27,4 +33,4 @@ So we need **a minimal token to work this extension.** If you want to know about
 ## Enterprise
 If you use a Github Enterprise, you should register your host like this :)
 
-<img src="https://user-images.githubusercontent.com/13075245/38159257-b65afeb0-34df-11e8-9c3d-8c4f50770514.gif" width="400">
+<img src="https://user-images.githubusercontent.com/13075245/38263740-d40272f8-37ab-11e8-935b-63f708fe2500.gif" width="400">
