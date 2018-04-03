@@ -33,4 +33,4 @@ Smart Github은 여러분의 저장소 위에서 동작합니다. 이는 여러�
 ## Enterprise
 github.com이 아닌, enterprise(기업용) 버전을 사용할 경우 아래처럼 호스트를 등록 해주세요 :)
 
-<img src="https://user-images.githubusercontent.com/13075245/38159257-b65afeb0-34df-11e8-9c3d-8c4f50770514.gif" width="400">
+<img src="https://user-images.githubusercontent.com/13075245/38263740-d40272f8-37ab-11e8-935b-63f708fe2500.gif" width="400">
