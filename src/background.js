@@ -1,3 +1,5 @@
+import {storage} from "./util";
+
 // default regex that will never match anything
 let rxIssueTab = /(?!)/;
 let rxPRTab = /(?!)/;
@@ -25,19 +27,8 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     }
 });
 
-function fetchHosts() {
-    return new Promise((resolve, reject) => {
-        chrome.storage.sync.get("sg-hosts", result => {
-            const defaultHost = "github.com";
-            const hosts = result["sg-hosts"] || [defaultHost];
-
-            resolve(hosts);
-        });
-    });
-}
-
 function updateRegexp() {
-    fetchHosts().then(hosts => {
+    storage.getHosts().then(hosts => {
         const rxHosts = hosts.join("|");
 
         // 다음에 매칭된다: .../issues, .../issues/, .../issues?{anything}
