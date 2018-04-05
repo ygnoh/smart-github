@@ -1,6 +1,7 @@
 const storage = {
     get: chrome.storage.sync.get,
     set: chrome.storage.sync.set,
+    remove: chrome.storage.sync.remove,
     getHosts: function() {
         return new Promise((resolve, reject) => {
             this.get("sg-hosts", result => {
@@ -8,6 +9,29 @@ const storage = {
                 const hosts = result["sg-hosts"] || [defaultHost];
 
                 resolve(hosts);
+            });
+        });
+    },
+    setHosts: async function(newHost) {
+        const hosts = await this.getHosts();
+
+        // prevent duplicate hosts
+        if (hosts.includes(newHost)) {
+            return;
+        }
+
+        hosts.push(newHost);
+
+        this.set({"sg-hosts": hosts}, () => {
+            chrome.runtime.sendMessage({name: "hosts-updated"}, () => {
+                location.reload();
+            });
+        });
+    },
+    resetHosts: function() {
+        this.remove("sg-hosts", () => {
+            chrome.runtime.sendMessage({name: "hosts-updated"}, () => {
+                location.reload();
             });
         });
     },

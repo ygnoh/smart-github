@@ -1,4 +1,6 @@
-fetchHosts().then(hosts => {
+import {storage} from "./util";
+
+storage.getHosts().then(hosts => {
     const hostListContainer = document.querySelector(".sg-host-list");
 
     hosts.forEach(host => {
@@ -12,7 +14,7 @@ const saveBtn = document.getElementById("sg-host-save");
 const resetBtn = document.getElementById("sg-host-reset");
 const input = document.getElementById("sg-host-input");
 saveBtn.addEventListener("click", saveHost);
-resetBtn.addEventListener("click", resetHost);
+resetBtn.addEventListener("click", storage.resetHosts.bind(storage));
 
 function saveHost() {
     let newHost = input.value.trim();
@@ -23,39 +25,5 @@ function saveHost() {
         return;
     }
 
-    chrome.storage.sync.get("sg-hosts", result => {
-        const defaultHost = "github.com";
-        const hosts = result["sg-hosts"] || [defaultHost];
-
-        // prevent duplicate hosts
-        if (hosts.includes(newHost)) {
-            return;
-        }
-
-        hosts.push(newHost);
-
-        chrome.storage.sync.set({"sg-hosts": hosts}, () => {
-            chrome.runtime.sendMessage({name: "hosts-updated"}, () => {
-                location.reload();
-            });
-        });
-    });
-}
-
-function resetHost() {
-    chrome.storage.sync.remove("sg-hosts", () => {
-        chrome.runtime.sendMessage({name: "hosts-updated"}, () => {
-            location.reload();
-        });
-    });
-}
-
-function fetchHosts() {
-    return new Promise((resolve, reject) => {
-        chrome.storage.sync.get("sg-hosts", result => {
-            const hosts = result["sg-hosts"] || ["github.com"];
-
-            resolve(hosts);
-        });
-    });
+    storage.setHosts(newHost);
 }
