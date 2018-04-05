@@ -75,6 +75,24 @@ const storage = {
     }
 };
 
+const fetcher = {
+    fetch: function({url, token}) {
+        const requestInit = {};
+        if (token) {
+            requestInit.headers = {
+                Authorization: `token ${token}`
+            };
+        }
+
+        return new Promise((resolve, reject) => {
+            fetch(url, requestInit)
+                .then(resolve)
+                .catch(reject);
+        });
+    }
+};
+
 export {
-    storage
+    storage,
+    fetcher
 };

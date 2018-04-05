@@ -1,4 +1,4 @@
-import {storage} from "./util";
+import {storage, fetcher} from "./util";
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-page-loaded") {
@@ -113,7 +113,7 @@ async function _fetchIssueTemplateData() {
     // https://developer.github.com/v3/repos/contents/
     const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE`;
     const token = await storage.getToken();
-    const response = await _fetch({url, token});
+    const response = await fetcher.fetch({url, token});
 
     const data = await _createTemplateData(response);
     data.issueData = true;
@@ -127,7 +127,7 @@ async function _fetchPRTemplateData() {
     // https://developer.github.com/v3/repos/contents/
     const url = `${host}/repos/${username}/${reponame}/contents/.github/PULL_REQUEST_TEMPLATE`;
     const token = await storage.getToken();
-    const response = await _fetch({url, token});
+    const response = await fetcher.fetch({url, token});
 
     const data = await _createTemplateData(response);
     data.issueData = false;
@@ -250,7 +250,7 @@ function _createDropdownContents(data) {
 
 function _createSaveTokenBtn() {
     const savebtn = document.createElement("button");
-    savebtn.addEventListener("click", storage.setToken);
+    savebtn.addEventListener("click", storage.setToken.bind(storage));
     savebtn.innerHTML = chrome.i18n.getMessage("save");
 
     return savebtn;
@@ -296,7 +296,7 @@ async function _fetchIssueTemplateFileInfo(name) {
     // https://developer.github.com/v3/repos/contents/#get-contents
     const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE/${name}.md`;
     const token = await storage.getToken();
-    const response = await _fetch({url, token});
+    const response = await fetcher.fetch({url, token});
 
     return await _createTemplateData(response);
 }
@@ -314,19 +314,4 @@ function _b64DecodeUnicode(str) {
 
 function _convertToSmallBtn(largeBtn) {
     largeBtn.classList.add("sg-small-btn");
-}
-
-function _fetch({url, token}) {
-    const requestInit = {};
-    if (token) {
-        requestInit.headers = {
-            Authorization: `token ${token}`
-        };
-    }
-
-    return new Promise((resolve, reject) => {
-        fetch(url, requestInit)
-            .then(resolve)
-            .catch(reject);
-    });
 }
