@@ -5,22 +5,19 @@
   "main": "extension/background.js",
   "scripts": {
     "build-background": "parcel build ./src/background.js -o background.min.js --no-cache",
-
     "build-content-js": "parcel build ./src/content.js -o content.min.js --no-cache",
     "build-content-css": "parcel build ./src/content.css -o content.min.css --no-cache",
     "build-content": "npm run build-content-js && npm run build-content-css",
-
     "build-popup-js": "parcel build ./src/popup.js -o popup.min.js --no-cache",
     "build-popup-css": "parcel build ./src/popup.css -o popup.min.css --no-cache",
     "build-popup": "npm run build-popup-js && npm run build-popup-css",
-
     "build": "npm run build-background && npm run build-content && npm run build-popup",
     "clean": "rm -rf ./dist/*.min.*",
-
-    "parcel-background": "parcel build ./src/background.js -o background.js -d dist-dev --no-minify",
-    "parcel-content": "parcel build ./src/content.js -o content.js -d dist-dev --no-minify",
-    "parcel-css": "parcel build ./src/content.css -o content.css -d dist-dev --no-minify",
-    "parcel": "npm run parcel-background && npm run parcel-content && npm run parcel-css"
+    "parcel-background": "parcel watch ./src/background.js -o background.js -d dist-dev",
+    "parcel-content": "parcel watch ./src/content.js -o content.js -d dist-dev",
+    "parcel-popup": "parcel watch ./src/popup.js -o popup.js -d dist-dev",
+    "parcel-css": "parcel watch ./src/content.css -o content.css -d dist-dev",
+    "parcel": "npm run parcel-background && npm run parcel-content && npm run parcel-popup && npm run parcel-css"
   },
   "repository": {
     "type": "git",
