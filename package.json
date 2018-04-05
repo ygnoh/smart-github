@@ -19,8 +19,9 @@
 
     "parcel-background": "parcel build ./src/background.js -o background.js -d dist-dev --no-minify",
     "parcel-content": "parcel build ./src/content.js -o content.js -d dist-dev --no-minify",
+    "parcel-popup": "parcel build ./src/popup.js -o popup.js -d dist-dev --no-minify",
     "parcel-css": "parcel build ./src/content.css -o content.css -d dist-dev --no-minify",
-    "parcel": "npm run parcel-background && npm run parcel-content && npm run parcel-css"
+    "parcel": "npm run parcel-background && npm run parcel-content && npm run parcel-popup && npm run parcel-css"
   },
   "repository": {
     "type": "git",
