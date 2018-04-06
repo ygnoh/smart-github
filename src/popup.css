@@ -101,6 +101,7 @@ a {
     padding: 2px 5px;
     font-size: 14px;
     outline: none;
+    border: 1px solid #cacdda;
     border-radius: 2px;
     background-color: #ffffff;
     cursor: pointer;
