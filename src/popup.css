@@ -54,6 +54,10 @@ a {
     font-weight: 500;
 }
 
+.sg-menu-item a {
+    color: #0645AD;
+}
+
 /* body */
 .sg-popup-body {
     font-size: 14px;
