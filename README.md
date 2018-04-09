@@ -28,8 +28,10 @@ Smart Github은 Github의 기능을 더 확장시켜주는 **오픈 소스** 크
 ## Token?
 Smart Github은 여러분의 저장소 위에서 동작합니다. 이는 여러분 저장소에 대한 접근을 필요로 합니다. 공개 저장소는 자유롭게 [Github API](https://developer.github.com/v3/)로 접근이 가능하지만, **비공개 저장소 혹은 Enterprise 버전의 github에 대해서는 접근이 제한됩니다.**
 
-그래서 **동작을 위해 최소한의 토큰이 필요합니다!** 토큰의 접근 범위에 대한 자세한 정보는 Github의 [이 글](https://developer.github.com/apps/building-oauth-apps/scopes-for-oauth-apps/)에서 확인하실 수 있습니다.
-필요한 토큰(repo)은 기본으로 선택되어 있습니다.
+그래서 **동작을 위해 최소한의 토큰이 필요할 수 있습니다!** 토큰을 생성하는 링크로 이동하시면 필요한 범위(scope)로 자동 선택되어 있습니다.
+<img src="https://user-images.githubusercontent.com/13075245/38512503-4a3286ca-3c66-11e8-824e-f41b73db9be2.gif" width="800">
+
+토큰의 접근 범위에 대한 자세한 정보는 Github의 [이 글](https://developer.github.com/apps/building-oauth-apps/scopes-for-oauth-apps/)에서 확인하실 수 있습니다.
 
 ## Enterprise
 github.com이 아닌, enterprise(기업용) 버전을 사용할 경우 아래처럼 호스트를 등록 해주세요 :)
