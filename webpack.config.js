@@ -2,10 +2,10 @@ const path = require('path');
 
 module.exports = function (env, args) {
   const config = {
-    entry: './src/background.js',
-    output: {
-      filename: 'background.bundle.js',
-      path: path.resolve(__dirname, 'dist')
+    entry: {
+      background: './src/background.js',
+      content: './src/content.js',
+      popup: './src/popup.js'
     },
     module: {
       rules: [
@@ -23,9 +23,17 @@ module.exports = function (env, args) {
 
   if (env && env.production) {
     config.mode = 'production';
+    config.output = {
+      filename: '[name].bundle.js',
+      path: path.resolve(__dirname, 'dist')
+    };
   } else {
     config.mode = 'development';
     config.devtool = 'source-map';
+    config.output = {
+      filename: '[name].bundle.js',
+      path: path.resolve(__dirname, 'dist-dev')
+    };
   }
 
   return config;
