@@ -2,9 +2,14 @@
   "name": "smart-github",
   "version": "1.1.0",
   "description": "Chrome extension for github",
-  "main": "extension/background.js",
+  "main": "src/background.js",
+  "dependencies": {
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14"
+  },
+  "devDependencies": {},
   "scripts": {
-    "clean": "rm -rf ./dist/*.min.*"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -12,14 +17,9 @@
   },
   "keywords": [],
   "author": "Yonggoo Noh <yonggoo.noh@gmail.com> (https://github.com/ygnoh)",
-  "license": "ISC",
+  "license": "AGPL-3.0-only",
   "bugs": {
     "url": "https://github.com/ygnoh/smart-github/issues"
   },
-  "homepage": "https://github.com/ygnoh/smart-github#readme",
-  "dependencies": {},
-  "devDependencies": {
-    "webpack": "^4.5.0",
-    "webpack-cli": "^2.0.14"
-  }
+  "homepage": "https://github.com/ygnoh/smart-github#readme"
 }
