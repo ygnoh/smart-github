@@ -17,9 +17,9 @@
     "url": "https://github.com/ygnoh/smart-github/issues"
   },
   "homepage": "https://github.com/ygnoh/smart-github#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "webpack": "^4.5.0"
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14"
   }
 }
