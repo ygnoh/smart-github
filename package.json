@@ -23,7 +23,8 @@
     "build": "webpack && npm run copy",
     "build-production": "webpack --env.production && npm run copy-production",
     "clean": "rm -r dist-dev/*",
-    "clean-production": "rm -r dist/*"
+    "clean-production": "rm -r dist/*",
+    "clean-all": "rm -r dist/* dist-dev/*"
   },
   "repository": {
     "type": "git",
