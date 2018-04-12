@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 module.exports = (env = {}, args = {}) => {
   const config = {
@@ -40,6 +41,7 @@ module.exports = (env = {}, args = {}) => {
       filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'dist')
     };
+    config.plugins.push(new OptimizeCSSAssetsPlugin({}));
   } else {
     config.mode = 'development';
     config.devtool = 'source-map';
