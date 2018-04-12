@@ -20,7 +20,7 @@
     },
     "background": {
         "scripts": [
-            "background.js"
+            "background.bundle.js"
         ],
         "persistent": false
     },
@@ -30,10 +30,10 @@
                 "<all_urls>"
             ],
             "js": [
-                "content.js"
+                "content.bundle.js"
             ],
             "css": [
-                "content.css"
+                "content.bundle.css"
             ]
         }
     ],

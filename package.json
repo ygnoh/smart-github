@@ -18,10 +18,12 @@
     "webpack-cli": "^2.0.14"
   },
   "scripts": {
-    "build": "webpack",
-    "build-production": "webpack --env.production",
-    "clean": "rm dist-dev/*.bundle.*",
-    "clean-production": "rm dist/*.bundle.*"
+    "copy": "cp -r src/manifest.json src/popup.html src/_locales src/icons dist-dev/",
+    "copy-production": "cp -r src/manifest.json src/popup.html src/_locales src/icons dist/",
+    "build": "webpack && npm run copy",
+    "build-production": "webpack --env.production && npm run copy-production",
+    "clean": "rm -r dist-dev/*",
+    "clean-production": "rm -r dist/*"
   },
   "repository": {
     "type": "git",
