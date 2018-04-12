@@ -1,6 +1,6 @@
 const path = require('path');
 
-module.exports = function (env, args) {
+module.exports = (env = {}, args = {}) => {
   const config = {
     entry: {
       background: './src/background.js',
@@ -21,7 +21,7 @@ module.exports = function (env, args) {
     }
   };
 
-  if (env && env.production) {
+  if (env.production) {
     config.mode = 'production';
     config.output = {
       filename: '[name].bundle.js',
