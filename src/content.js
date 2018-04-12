@@ -1,3 +1,5 @@
+import "./content.css";
+
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-page-loaded") {
         const newIssueBtn = document.querySelector('a.btn[href$="/issues/new"]');

@@ -1,3 +1,5 @@
+import "./popup.css";
+
 fetchHosts().then(hosts => {
     const hostListContainer = document.querySelector(".sg-host-list");
 

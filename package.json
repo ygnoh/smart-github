@@ -2,25 +2,29 @@
   "name": "smart-github",
   "version": "1.1.0",
   "description": "Chrome extension for github",
-  "main": "extension/background.js",
+  "main": "src/background.js",
+  "dependencies": {
+    "babel-runtime": "^6.26.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "css-loader": "^0.28.11",
+    "mini-css-extract-plugin": "^0.4.0",
+    "optimize-css-assets-webpack-plugin": "^4.0.0",
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14"
+  },
   "scripts": {
-    "build-background": "parcel build ./src/background.js -o background.min.js --no-cache",
-
-    "build-content-js": "parcel build ./src/content.js -o content.min.js --no-cache",
-    "build-content-css": "parcel build ./src/content.css -o content.min.css --no-cache",
-    "build-content": "npm run build-content-js && npm run build-content-css",
-
-    "build-popup-js": "parcel build ./src/popup.js -o popup.min.js --no-cache",
-    "build-popup-css": "parcel build ./src/popup.css -o popup.min.css --no-cache",
-    "build-popup": "npm run build-popup-js && npm run build-popup-css",
-
-    "build": "npm run build-background && npm run build-content && npm run build-popup",
-    "clean": "rm -rf ./dist/*.min.*",
-
-    "parcel-background": "parcel build ./src/background.js -o background.js -d dist-dev --no-minify",
-    "parcel-content": "parcel build ./src/content.js -o content.js -d dist-dev --no-minify",
-    "parcel-css": "parcel build ./src/content.css -o content.css -d dist-dev --no-minify",
-    "parcel": "npm run parcel-background && npm run parcel-content && npm run parcel-css"
+    "copy": "cp -r src/manifest.json src/popup.html src/_locales src/icons dist-dev/",
+    "copy-production": "cp -r src/manifest.json src/popup.html src/_locales src/icons dist/",
+    "build": "webpack && npm run copy",
+    "build-production": "webpack --env.production && npm run copy-production",
+    "clean": "rm -r dist-dev/*",
+    "clean-production": "rm -r dist/*",
+    "clean-all": "rm -r dist/* dist-dev/*"
   },
   "repository": {
     "type": "git",
@@ -28,17 +32,9 @@
   },
   "keywords": [],
   "author": "Yonggoo Noh <yonggoo.noh@gmail.com> (https://github.com/ygnoh)",
-  "license": "ISC",
+  "license": "AGPL-3.0-only",
   "bugs": {
     "url": "https://github.com/ygnoh/smart-github/issues"
   },
-  "homepage": "https://github.com/ygnoh/smart-github#readme",
-  "dependencies": {
-    "babel-runtime": "^6.26.0"
-  },
-  "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.6.1"
-  }
+  "homepage": "https://github.com/ygnoh/smart-github#readme"
 }
