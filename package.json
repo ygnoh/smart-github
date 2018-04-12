@@ -19,7 +19,9 @@
   },
   "scripts": {
     "build": "webpack",
-    "build-production": "webpack --env.production"
+    "build-production": "webpack --env.production",
+    "clean": "rm dist-dev/*.bundle.*",
+    "clean-production": "rm dist/*.bundle.*"
   },
   "repository": {
     "type": "git",
