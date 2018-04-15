@@ -52,7 +52,8 @@ function sendMessage({url, tabId}) {
     if (rxIssueTab.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "issue-tab-loaded"});
     } else if (rxPRTab.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
+        // 아직 불필요하므로 주석 처리
+        // chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
     } else if (rxNewIssuePage.test(url)) {
         chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
     } else if (rxIssueContentsPage.test(url)) {

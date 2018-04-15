@@ -38,7 +38,6 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             const dropdownContents = _createDropdownContents(data);
             dropdown.replaceChild(dropdownContents, loadingMsg);
         });
-    } else if (msg.name === "pr-tab-loaded") {
     } else if (msg.name === "new-issue-page-loaded") {
         const bottomArea = document.getElementsByClassName("form-actions")[0];
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
@@ -63,25 +62,6 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             const labels = [].map.call(labelContainer, label => label.innerHTML);
         
             storage.setTemplateNameToLabelsMap({[templateName]: labels});
-        });
-    } else if (msg.name === "new-pr-page-loaded") {
-        const comparePlaceholder = document.querySelector(".compare-pr-placeholder");
-        const createPrBtn = comparePlaceholder.getElementsByTagName("button")[0];
-
-        const dropdownWrapper = _createDropdownWrapper();
-        dropdownWrapper.classList.add("float-left");
-        const dropdown = _createDropdown();
-        dropdown.classList.add("sg-bottom-left");
-        const loadingMsg = _createLoadingMsg();
-
-        dropdown.appendChild(loadingMsg);
-        dropdownWrapper.append(createPrBtn, dropdown);
-
-        comparePlaceholder.prepend(dropdownWrapper);
-
-        _fetchPRTemplateData().then(data => {
-            const dropdownContents = _createDropdownContents(data);
-            dropdown.replaceChild(dropdownContents, loadingMsg);
         });
     }
 });
@@ -113,21 +93,7 @@ async function _fetchIssueTemplateData() {
     const token = await storage.getToken();
     const response = await fetcher.fetch({url, token});
 
-    const data = await _createTemplateData(response);
-    data.issueData = true;
-
-    return data;
-}
-
-async function _fetchPRTemplateData() {
-    const url = urlManager.getPrTemplateApiUrl();
-    const token = await storage.getToken();
-    const response = await storage.fetch({url, token});
-
-    const data = await _createTemplateData(response);
-    data.issueData = false;
-
-    return data;
+    return await _createTemplateData(response);
 }
 
 async function _createTemplateData(response) {
@@ -194,26 +160,17 @@ function _createDropdownContents(data) {
     const {contents, newIssueUrl, labels} = data;
     const templateNames = _extractTemplateNames(contents);
 
-    if (data.issueData) {
-        for (const tempName of templateNames) {
-            let href = `${newIssueUrl}?template=${tempName}.md`;
+    for (const tempName of templateNames) {
+        let href = `${newIssueUrl}?template=${tempName}.md`;
 
-            if (labels[tempName]) {
-                const encodedLabels = encodeURIComponent(labels[tempName].join(","));
-                href = `${newIssueUrl}?template=${tempName}.md&labels=${encodedLabels}`;
-            }
-
-            const item = `<a href=${href}>${tempName}</a>`;
-
-            dropdownContents.innerHTML += item;
+        if (labels[tempName]) {
+            const encodedLabels = encodeURIComponent(labels[tempName].join(","));
+            href = `${newIssueUrl}?template=${tempName}.md&labels=${encodedLabels}`;
         }
-    } else {
-        for (const tempName of templateNames) {
-            const href = `?quick_pull=1&template=${tempName}.md&labels=${tempName}`;
-            const item = `<a href=${href}>${tempName}</a>`;
 
-            dropdownContents.innerHTML += item;
-        }
+        const item = `<a href=${href}>${tempName}</a>`;
+
+        dropdownContents.innerHTML += item;
     }
 
     return dropdownContents;
