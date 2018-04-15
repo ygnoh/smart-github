@@ -16,7 +16,7 @@ const resetBtn = document.getElementById("sg-host-reset");
 const input = document.getElementById("sg-host-input");
 saveBtn.addEventListener("click", saveHost);
 resetBtn.addEventListener("click", storage.resetHosts.bind(storage));
-document.getElementById('sg-host-form').addEventListener('submit', e => {
+document.getElementById("sg-host-form").addEventListener("submit", e => {
     e.preventDefault();
 })
 
