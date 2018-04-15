@@ -1,7 +1,12 @@
+/** chrome.storage 관련 작업을 처리하는 객체  */
 const storage = {
     get: chrome.storage.sync.get,
     set: chrome.storage.sync.set,
     remove: chrome.storage.sync.remove,
+    /**
+     * 현재 저장된 hosts를 얻는다.
+     * @returns {Array} 저장된 hosts
+     */
     getHosts: function () {
         return new Promise((resolve, reject) => {
             this.get("sg-hosts", result => {
@@ -12,6 +17,10 @@ const storage = {
             });
         });
     },
+    /**
+     * 새 host를 추가하고, 페이지를 새로고침한다.
+     * @param {string} newHost 새로 추가할 host
+     */
     setHosts: async function (newHost) {
         const hosts = await this.getHosts();
 
@@ -28,6 +37,9 @@ const storage = {
             });
         });
     },
+    /**
+     * 저장된 hosts를 모두 reset하고 페이지를 새로고침한다.
+     */
     resetHosts: function () {
         this.remove("sg-hosts", () => {
             chrome.runtime.sendMessage({ name: "hosts-updated" }, () => {
@@ -35,6 +47,10 @@ const storage = {
             });
         });
     },
+    /**
+     * 현재 저장소의 token을 얻는다.
+     * @returns {string} 현재 저장소의 token
+     */
     getToken: function () {
         return new Promise((resolve, reject) => {
             const tokenKey = `sg-token(${location.host})`;
@@ -45,6 +61,9 @@ const storage = {
             });
         });
     },
+    /**
+     * 현재 저장소의 token을 새로 저장하고, 페이지를 새로고침한다.
+     */
     setToken: function () {
         const key = `sg-token(${location.host})`;
         const token = document.getElementById("sg-token").value;
@@ -54,6 +73,10 @@ const storage = {
             location.reload();
         });
     },
+    /**
+     * 현재 저장소의 '템플릿-레이블' map을 얻는다.
+     * @returns {Object} 템플릿 이름을 키로 가지고, 해당 레이블들을 값으로 가지는 객체
+     */
     getTemplateNameToLabelsMap: function () {
         const key = `templateNameToLabels(${location.host})`;
 
@@ -63,6 +86,10 @@ const storage = {
             });
         });
     },
+    /**
+     * 하나의 '템플릿-레이블' map을 upsert한다.
+     * @param {Object} newMap 새로운 '템플릿 이름-레이블' 객체
+     */
     setTemplateNameToLabelsMap: function (newMap) {
         const key = `templateNameToLabels(${location.host})`;
 
@@ -75,7 +102,14 @@ const storage = {
     }
 };
 
+/** ajax 호출과 관련 작업을 처리하는 객체 */
 const fetcher = {
+    /**
+     * url과 token을 받아 fetch하는 함수
+     * @param {string} url fetch 하고자하는 url 정보
+     * @param {string} [token=undefined] fetch에 사용할 token
+     * @returns {Object} 해당 url로부터 fetch한 객체
+     */
     fetch: function ({ url, token }) {
         const requestInit = {};
         if (token) {
