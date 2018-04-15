@@ -1,5 +1,5 @@
 import "./popup.css";
-import {storage} from "./util";
+import {storage} from "./utils";
 
 storage.getHosts().then(hosts => {
     const hostListContainer = document.querySelector(".sg-host-list");

@@ -1,5 +1,5 @@
 import "./content.css";
-import {storage, fetcher, urlManager} from "./util";
+import {storage, fetcher, urlManager} from "./utils";
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-page-loaded") {

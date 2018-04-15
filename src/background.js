@@ -1,4 +1,4 @@
-import {storage} from "./util";
+import {storage} from "./utils";
 
 // default regex that will never match anything
 let rxIssueTab = /(?!)/;
