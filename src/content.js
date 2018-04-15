@@ -1,5 +1,5 @@
 import "./content.css";
-import {storage, fetcher} from "./util";
+import {storage, fetcher, urlManager} from "./util";
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-page-loaded") {
@@ -58,7 +58,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         const submitBtn = bottomArea.getElementsByClassName("btn-primary")[0];
 
         submitBtn.addEventListener("click", () => {
-            const templateName = location.search.match(/template=(.*?)\.md/i)[1];
+            const templateName = urlManager.getCurrentTemplate();
             const labelContainer = document.querySelector(".labels").children;
             const labels = [].map.call(labelContainer, label => label.innerHTML);
         
@@ -109,10 +109,7 @@ function _createLoadingMsg() {
 }
 
 async function _fetchIssueTemplateData() {
-    const {host, username, reponame} = _getApiInfo();
-
-    // https://developer.github.com/v3/repos/contents/
-    const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE`;
+    const url = urlManager.getIssueTemplateApiUrl();
     const token = await storage.getToken();
     const response = await fetcher.fetch({url, token});
 
@@ -123,10 +120,7 @@ async function _fetchIssueTemplateData() {
 }
 
 async function _fetchPRTemplateData() {
-    const {host, username, reponame} = _getApiInfo();
-
-    // https://developer.github.com/v3/repos/contents/
-    const url = `${host}/repos/${username}/${reponame}/contents/.github/PULL_REQUEST_TEMPLATE`;
+    const url = urlManager.getPrTemplateApiUrl();
     const token = await storage.getToken();
     const response = await storage.fetch({url, token});
 
@@ -153,21 +147,6 @@ async function _createTemplateData(response) {
     return templateData;
 }
 
-function _getApiInfo() {
-    const host = location.protocol + "//" +
-        (location.host === "github.com" ? "api.github.com" : (location.host + "/api/v3"));
-
-    const match = location.pathname.match(/([^\/]+)\/([^\/]+)/);
-    const username = match[1];
-    const reponame = match[2];
-
-    return {
-        host,
-        username,
-        reponame
-    };
-}
-
 async function _convertReadableStreamToJson(res) {
     let jsonData;
     await res.json().then(data => {jsonData = data});
@@ -180,16 +159,16 @@ function _getContentsOnError(status) {
     switch (status) {
         case 401:
             return `${chrome.i18n.getMessage("401error_1")}<br>` +
-                `1. <a class="sg-new-token" href="${_getTokenListUrl()}" target="_blank">` +
+                `1. <a class="sg-new-token" href="${urlManager.getTokenListPageUrl()}" target="_blank">` +
                 `${chrome.i18n.getMessage("401error_2")}</a><br>` +
-                `2. <a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">` +
+                `2. <a class="sg-new-token" href="${urlManager.getNewTokenPageUrl()}" target="_blank">` +
                 `${chrome.i18n.getMessage("401error_3")}</a><br>` +
                 `3. ${chrome.i18n.getMessage("401error_4")}<br>` +
                 `<input id="sg-token" type="text"` +
                 `placeholder="${chrome.i18n.getMessage("tokenPlaceholder")}" autocomplete="off">`;
         case 404:
             return `${chrome.i18n.getMessage("404error_1")}<br>` +
-                `1. <a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">` +
+                `1. <a class="sg-new-token" href="${urlManager.getNewTokenPageUrl()}" target="_blank">` +
                 `${chrome.i18n.getMessage("404error_2")}</a><br>` +
                 `2. ${chrome.i18n.getMessage("404error_3")}<br>` +
                 `<input id="sg-token" type="text"` + 
@@ -197,15 +176,6 @@ function _getContentsOnError(status) {
         default:
             return chrome.i18n.getMessage("unknownError");
     }
-}
-
-function _getTokenListUrl() {
-    return `${location.protocol}//${location.host}/settings/tokens`;
-}
-
-function _getNewTokenUrl() {
-    return `${location.protocol}//${location.host}/settings/tokens/new?` +
-        `scopes=repo&description=SmartGithub(${location.host})`;
 }
 
 function _createDropdownContents(data) {
@@ -282,7 +252,7 @@ function _resetIssueBody() {
         return;
     }
 
-    const templateName = location.search.match(/template=(.*?)\.md/i)[1];
+    const templateName = urlManager.getCurrentTemplate();
     _fetchIssueTemplateFileInfo(templateName).then(result => {
         const issueBody = document.getElementById("issue_body");
         // base64 decoding
@@ -293,9 +263,7 @@ function _resetIssueBody() {
 }
 
 async function _fetchIssueTemplateFileInfo(name) {
-    const {host, username, reponame} = _getApiInfo();
-    // https://developer.github.com/v3/repos/contents/#get-contents
-    const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE/${name}.md`;
+    const url = urlManager.getFileInfoApiUrl(name);
     const token = await storage.getToken();
     const response = await fetcher.fetch({url, token});
 
