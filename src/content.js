@@ -1,4 +1,5 @@
 import "./content.css";
+import {storage, fetcher} from "./util";
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-page-loaded") {
@@ -55,25 +56,13 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         bottomArea.appendChild(resetBtn);
 
         const submitBtn = bottomArea.getElementsByClassName("btn-primary")[0];
-        const templateLabelKey = `templateLabel(${location.host})`;
 
         submitBtn.addEventListener("click", () => {
             const templateName = location.search.match(/template=(.*?)\.md/i)[1];
-            const labels = document.getElementsByClassName('labels')[0].children;
-          
-            const currentLabels = [];
-            for (const label of labels) {
-                currentLabels.push(label.innerText);
-            }
+            const labelContainer = document.querySelector(".labels").children;
+            const labels = [].map.call(labelContainer, label => label.innerHTML);
         
-            chrome.storage.sync.get(templateLabelKey, result => {
-                chrome.storage.sync.set({
-                    [templateLabelKey]: Object.assign({},
-                        result[templateLabelKey],
-                        {[templateName]: currentLabels}
-                    )
-                });
-            });
+            storage.setTemplateNameToLabelsMap({[templateName]: labels});
         });
     } else if (msg.name === "new-pr-page-loaded") {
         const comparePlaceholder = document.querySelector(".compare-pr-placeholder");
@@ -124,8 +113,8 @@ async function _fetchIssueTemplateData() {
 
     // https://developer.github.com/v3/repos/contents/
     const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE`;
-    const token = await _fetchToken();
-    const response = await _fetch({url, token});
+    const token = await storage.getToken();
+    const response = await fetcher.fetch({url, token});
 
     const data = await _createTemplateData(response);
     data.issueData = true;
@@ -138,8 +127,8 @@ async function _fetchPRTemplateData() {
 
     // https://developer.github.com/v3/repos/contents/
     const url = `${host}/repos/${username}/${reponame}/contents/.github/PULL_REQUEST_TEMPLATE`;
-    const token = await _fetchToken();
-    const response = await _fetch({url, token});
+    const token = await storage.getToken();
+    const response = await storage.fetch({url, token});
 
     const data = await _createTemplateData(response);
     data.issueData = false;
@@ -156,21 +145,12 @@ async function _createTemplateData(response) {
     // TODO: 어떨 땐 JSON 어떨 땐 DOM? 일관성 필요함
     if (response.ok) {
         templateData.contents = await _convertReadableStreamToJson(response);
-        templateData.labels = await _getTemplateLabels();
+        templateData.labels = await storage.getTemplateNameToLabelsMap();
     } else {
         templateData.contents = _getContentsOnError(response.status);
     }
 
     return templateData;
-}
-
-function _getTemplateLabels() {
-    return new Promise((resolve, reject) => {
-        const templateLabelKey = `templateLabel(${location.host})`;
-        chrome.storage.sync.get([templateLabelKey], result => {
-            resolve(result[templateLabelKey] || {});
-        });
-    });
 }
 
 function _getApiInfo() {
@@ -186,17 +166,6 @@ function _getApiInfo() {
         username,
         reponame
     };
-}
-
-function _fetchToken() {
-    return new Promise((resolve, reject) => {
-        const tokenKey = `sg-token(${location.host})`;
-        chrome.storage.sync.get(tokenKey, result => {
-            const token = result[tokenKey];
-
-            resolve(token);
-        });
-    });
 }
 
 async function _convertReadableStreamToJson(res) {
@@ -282,19 +251,10 @@ function _createDropdownContents(data) {
 
 function _createSaveTokenBtn() {
     const savebtn = document.createElement("button");
-    savebtn.addEventListener("click", _saveToken);
+    savebtn.addEventListener("click", storage.setToken.bind(storage));
     savebtn.innerHTML = chrome.i18n.getMessage("save");
 
     return savebtn;
-}
-
-function _saveToken() {
-    const tokenKey = `sg-token(${location.host})`;
-    const token = document.getElementById("sg-token").value;
-    chrome.storage.sync.set({[tokenKey]: token}, () => {
-        alert(chrome.i18n.getMessage("tokenSaved"));
-        location.reload();
-    });
 }
 
 function _extractTemplateNames(contents) {
@@ -336,8 +296,8 @@ async function _fetchIssueTemplateFileInfo(name) {
     const {host, username, reponame} = _getApiInfo();
     // https://developer.github.com/v3/repos/contents/#get-contents
     const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE/${name}.md`;
-    const token = await _fetchToken();
-    const response = await _fetch({url, token});
+    const token = await storage.getToken();
+    const response = await fetcher.fetch({url, token});
 
     return await _createTemplateData(response);
 }
@@ -355,19 +315,4 @@ function _b64DecodeUnicode(str) {
 
 function _convertToSmallBtn(largeBtn) {
     largeBtn.classList.add("sg-small-btn");
-}
-
-function _fetch({url, token}) {
-    const requestInit = {};
-    if (token) {
-        requestInit.headers = {
-            Authorization: `token ${token}`
-        };
-    }
-
-    return new Promise((resolve, reject) => {
-        fetch(url, requestInit)
-            .then(resolve)
-            .catch(reject);
-    });
 }
