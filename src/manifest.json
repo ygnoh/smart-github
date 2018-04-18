@@ -40,7 +40,8 @@
     "permissions": [
         "tabs",
         "webNavigation",
-        "storage"
+        "storage",
+        "notifications"
     ],
 
     "default_locale": "en",
