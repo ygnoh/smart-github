@@ -1,3 +1,5 @@
+import {MESSAGE} from "../consts";
+
 /** chrome.storage 관련 작업을 처리하는 객체  */
 export default {
     get: chrome.storage.sync.get,
@@ -32,7 +34,7 @@ export default {
         hosts.push(newHost);
 
         this.set({ "sg-hosts": hosts }, () => {
-            chrome.runtime.sendMessage({ name: "hosts-updated" }, () => {
+            chrome.runtime.sendMessage({ name: MESSAGE.HOSTS_UPDATED }, () => {
                 location.reload();
             });
         });
@@ -42,7 +44,7 @@ export default {
      */
     resetHosts: function () {
         this.remove("sg-hosts", () => {
-            chrome.runtime.sendMessage({ name: "hosts-updated" }, () => {
+            chrome.runtime.sendMessage({ name: MESSAGE.HOSTS_UPDATED }, () => {
                 location.reload();
             });
         });

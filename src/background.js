@@ -1,4 +1,5 @@
 import {storage} from "./utils";
+import {MESSAGE} from "./consts";
 
 // default regex that will never match anything
 let rxIssueTab = /(?!)/;
@@ -10,7 +11,7 @@ let rxIssueContentsPage = /(?!)/;
 updateRegexp();
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    if (msg.name === "hosts-updated") {
+    if (msg.name === MESSAGE.HOSTS_UPDATED) {
         updateRegexp();
     }
 });
@@ -50,16 +51,16 @@ function updateRegexp() {
 
 function sendMessage({url, tabId}) {
     if (rxIssueTab.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "issue-tab-loaded"});
+        chrome.tabs.sendMessage(tabId, {name: MESSAGE.ISSUE_TAB_LOADED});
     } else if (rxPRTab.test(url)) {
         // 아직 불필요하므로 주석 처리
-        // chrome.tabs.sendMessage(tabId, {name: "pr-tab-loaded"});
+        // chrome.tabs.sendMessage(tabId, {name: MESSAGE.PR_TAB_LOADED});
     } else if (rxNewIssuePage.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "new-issue-page-loaded"});
+        chrome.tabs.sendMessage(tabId, {name: MESSAGE.NEW_ISSUE_PAGE_LOADED});
     } else if (rxIssueContentsPage.test(url)) {
-        chrome.tabs.sendMessage(tabId, {name: "issue-contents-page-loaded"});
+        chrome.tabs.sendMessage(tabId, {name: MESSAGE.ISSUE_CONTENTS_PAGE_LOADED});
     } else if (rxNewPRPageFromPRTab.test(url)) {
         // [#62] 동작 임시 제한
-        // chrome.tabs.sendMessage(tabId, {name: "new-pr-page-loaded"});
+        // chrome.tabs.sendMessage(tabId, {name: MESSAGE.NEW_PR_PAGE_LOADED});
     }
 }

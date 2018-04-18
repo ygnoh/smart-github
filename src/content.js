@@ -1,8 +1,9 @@
 import "./content.css";
 import {storage, fetcher, urlManager, dom} from "./utils";
+import {MESSAGE} from "./consts";
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-page-loaded") {
+    if (msg.name === MESSAGE.ISSUE_TAB_LOADED || msg.name === MESSAGE.ISSUE_CONTENTS_PAGE_LOADED) {
         const newIssueBtn = dom.getNewIssueBtn();
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
         if (!newIssueBtn) {
@@ -17,7 +18,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             return;
         }
 
-        if (msg.name === "issue-contents-page-loaded") {
+        if (msg.name === MESSAGE.ISSUE_CONTENTS_PAGE_LOADED) {
             _convertToSmallBtn(newIssueBtn);
         }
 
@@ -36,7 +37,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             const dropdownContents = dom.createDropdownContents(data);
             dropdown.replaceChild(dropdownContents, loadingMsg);
         });
-    } else if (msg.name === "new-issue-page-loaded") {
+    } else if (msg.name === MESSAGE.NEW_ISSUE_PAGE_LOADED) {
         const bottomArea = dom.getIssueBottomArea();
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
         if (!bottomArea) {
