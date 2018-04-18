@@ -1,8 +1,10 @@
 import "./content.css";
+import {storage, fetcher, urlManager, dom} from "./utils";
+import {MESSAGE} from "./consts";
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg.name === "issue-tab-loaded" || msg.name === "issue-contents-page-loaded") {
-        const newIssueBtn = document.querySelector('a.btn[href$="/issues/new"]');
+    if (msg.name === MESSAGE.ISSUE_TAB_LOADED || msg.name === MESSAGE.ISSUE_CONTENTS_PAGE_LOADED) {
+        const newIssueBtn = dom.getNewIssueBtn();
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
         if (!newIssueBtn) {
             return;
@@ -16,15 +18,13 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             return;
         }
 
-        if (msg.name === "issue-contents-page-loaded") {
+        if (msg.name === MESSAGE.ISSUE_CONTENTS_PAGE_LOADED) {
             _convertToSmallBtn(newIssueBtn);
         }
 
-        const dropdownWrapper = _createDropdownWrapper();
-        dropdownWrapper.classList.add("float-right");
-        const dropdown = _createDropdown();
-        dropdown.classList.add("sg-bottom-right");
-        const loadingMsg = _createLoadingMsg();
+        const dropdownWrapper = dom.createRightDropdownWrapper();
+        const dropdown = dom.createRightDropdown();
+        const loadingMsg = dom.createLoadingMsg();
 
         dropdown.appendChild(loadingMsg);
         dropdownWrapper.append(newIssueBtn, dropdown);
@@ -34,297 +34,50 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         _fetchIssueTemplateData().then(data => {
             data.newIssueUrl = newIssueBtn.getAttribute("href");
 
-            const dropdownContents = _createDropdownContents(data);
+            const dropdownContents = dom.createDropdownContents(data);
             dropdown.replaceChild(dropdownContents, loadingMsg);
         });
-    } else if (msg.name === "pr-tab-loaded") {
-    } else if (msg.name === "new-issue-page-loaded") {
-        const bottomArea = document.getElementsByClassName("form-actions")[0];
+    } else if (msg.name === MESSAGE.NEW_ISSUE_PAGE_LOADED) {
+        const bottomArea = dom.getIssueBottomArea();
         // onUpdated 이벤트가 페이지가 이동하기 전에 발생하여 생기는 TypeError 임시 방어 처리
         if (!bottomArea) {
             return;
         }
 
         // [#28] 방어 처리
-        const oldResetBtn = bottomArea.getElementsByClassName("sg-reset-btn");
-        while (oldResetBtn.length > 0) {
-            oldResetBtn[0].remove();
-        }
+        dom.removeResetTemplateBtns();
 
-        const resetBtn = _createResetTemplateBtn();
+        const resetBtn = dom.createResetTemplateBtn(_resetIssueHandler);
         bottomArea.appendChild(resetBtn);
 
         const submitBtn = bottomArea.getElementsByClassName("btn-primary")[0];
-        const templateLabelKey = `templateLabel(${location.host})`;
 
         submitBtn.addEventListener("click", () => {
-            const templateName = location.search.match(/template=(.*?)\.md/i)[1];
-            const labels = document.getElementsByClassName('labels')[0].children;
-          
-            const currentLabels = [];
-            for (const label of labels) {
-                currentLabels.push(label.innerText);
-            }
+            const templateName = urlManager.getCurrentTemplate();
+            const labelContainer = dom.getLabels().children;
+            const labels = [].map.call(labelContainer, label => label.innerText);
         
-            chrome.storage.sync.get(templateLabelKey, result => {
-                chrome.storage.sync.set({
-                    [templateLabelKey]: Object.assign({},
-                        result[templateLabelKey],
-                        {[templateName]: currentLabels}
-                    )
-                });
-            });
-        });
-    } else if (msg.name === "new-pr-page-loaded") {
-        const comparePlaceholder = document.querySelector(".compare-pr-placeholder");
-        const createPrBtn = comparePlaceholder.getElementsByTagName("button")[0];
-
-        const dropdownWrapper = _createDropdownWrapper();
-        dropdownWrapper.classList.add("float-left");
-        const dropdown = _createDropdown();
-        dropdown.classList.add("sg-bottom-left");
-        const loadingMsg = _createLoadingMsg();
-
-        dropdown.appendChild(loadingMsg);
-        dropdownWrapper.append(createPrBtn, dropdown);
-
-        comparePlaceholder.prepend(dropdownWrapper);
-
-        _fetchPRTemplateData().then(data => {
-            const dropdownContents = _createDropdownContents(data);
-            dropdown.replaceChild(dropdownContents, loadingMsg);
+            storage.setTemplateNameToLabelsMap({[templateName]: labels});
         });
     }
 });
 
-function _createDropdownWrapper() {
-    const dropdownWrapper = document.createElement("div");
-    dropdownWrapper.classList.add("sg-dropdown-wrapper");
-
-    return dropdownWrapper;
-}
-
-function _createDropdown() {
-    const dropdown = document.createElement("div");
-    dropdown.classList.add("sg-dropdown");
-
-    return dropdown;
-}
-
-function _createLoadingMsg() {
-    const loadingMsg = document.createElement("a");
-    loadingMsg.href = "#";
-    loadingMsg.innerHTML = chrome.i18n.getMessage("loading");
-
-    return loadingMsg;
-}
-
 async function _fetchIssueTemplateData() {
-    const {host, username, reponame} = _getApiInfo();
+    const url = urlManager.getIssueTemplateApiUrl();
+    const token = await storage.getToken();
+    const response = await fetcher.fetch({url, token});
 
-    // https://developer.github.com/v3/repos/contents/
-    const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE`;
-    const token = await _fetchToken();
-    const response = await _fetch({url, token});
-
-    const data = await _createTemplateData(response);
-    data.issueData = true;
-
-    return data;
+    return await dom.createTemplateData(response);
 }
 
-async function _fetchPRTemplateData() {
-    const {host, username, reponame} = _getApiInfo();
-
-    // https://developer.github.com/v3/repos/contents/
-    const url = `${host}/repos/${username}/${reponame}/contents/.github/PULL_REQUEST_TEMPLATE`;
-    const token = await _fetchToken();
-    const response = await _fetch({url, token});
-
-    const data = await _createTemplateData(response);
-    data.issueData = false;
-
-    return data;
-}
-
-async function _createTemplateData(response) {
-    let templateData = {
-        ok: response.ok,
-        status: response.status
-    };
-
-    // TODO: 어떨 땐 JSON 어떨 땐 DOM? 일관성 필요함
-    if (response.ok) {
-        templateData.contents = await _convertReadableStreamToJson(response);
-        templateData.labels = await _getTemplateLabels();
-    } else {
-        templateData.contents = _getContentsOnError(response.status);
-    }
-
-    return templateData;
-}
-
-function _getTemplateLabels() {
-    return new Promise((resolve, reject) => {
-        const templateLabelKey = `templateLabel(${location.host})`;
-        chrome.storage.sync.get([templateLabelKey], result => {
-            resolve(result[templateLabelKey] || {});
-        });
-    });
-}
-
-function _getApiInfo() {
-    const host = location.protocol + "//" +
-        (location.host === "github.com" ? "api.github.com" : (location.host + "/api/v3"));
-
-    const match = location.pathname.match(/([^\/]+)\/([^\/]+)/);
-    const username = match[1];
-    const reponame = match[2];
-
-    return {
-        host,
-        username,
-        reponame
-    };
-}
-
-function _fetchToken() {
-    return new Promise((resolve, reject) => {
-        const tokenKey = `sg-token(${location.host})`;
-        chrome.storage.sync.get(tokenKey, result => {
-            const token = result[tokenKey];
-
-            resolve(token);
-        });
-    });
-}
-
-async function _convertReadableStreamToJson(res) {
-    let jsonData;
-    await res.json().then(data => {jsonData = data});
-
-    return jsonData;
-}
-
-// TODO: refactor to HTML
-function _getContentsOnError(status) {
-    switch (status) {
-        case 401:
-            return `${chrome.i18n.getMessage("401error_1")}<br>` +
-                `1. <a class="sg-new-token" href="${_getTokenListUrl()}" target="_blank">` +
-                `${chrome.i18n.getMessage("401error_2")}</a><br>` +
-                `2. <a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">` +
-                `${chrome.i18n.getMessage("401error_3")}</a><br>` +
-                `3. ${chrome.i18n.getMessage("401error_4")}<br>` +
-                `<input id="sg-token" type="text"` +
-                `placeholder="${chrome.i18n.getMessage("tokenPlaceholder")}" autocomplete="off">`;
-        case 404:
-            return `${chrome.i18n.getMessage("404error_1")}<br>` +
-                `1. <a class="sg-new-token" href="${_getNewTokenUrl()}" target="_blank">` +
-                `${chrome.i18n.getMessage("404error_2")}</a><br>` +
-                `2. ${chrome.i18n.getMessage("404error_3")}<br>` +
-                `<input id="sg-token" type="text"` + 
-                `placeholder="${chrome.i18n.getMessage("tokenPlaceholder")}" autocomplete="off">`;
-        default:
-            return chrome.i18n.getMessage("unknownError");
-    }
-}
-
-function _getTokenListUrl() {
-    return `${location.protocol}//${location.host}/settings/tokens`;
-}
-
-function _getNewTokenUrl() {
-    return `${location.protocol}//${location.host}/settings/tokens/new?` +
-        `scopes=repo&description=SmartGithub(${location.host})`;
-}
-
-function _createDropdownContents(data) {
-    const dropdownContents = document.createElement("div");
-    dropdownContents.classList.add("sg-dropdown-contents");
-
-    if (!data.ok) {
-        // event bind 문제로 저장 버튼은 따로 삽입함
-        const savebtn = _createSaveTokenBtn();
-        dropdownContents.innerHTML = data.contents;
-        dropdownContents.appendChild(savebtn);
-
-        return dropdownContents;
-    }
-
-    const {contents, newIssueUrl, labels} = data;
-    const templateNames = _extractTemplateNames(contents);
-
-    if (data.issueData) {
-        for (const tempName of templateNames) {
-            let href = `${newIssueUrl}?template=${tempName}.md`;
-
-            if (labels[tempName]) {
-                const encodedLabels = encodeURIComponent(labels[tempName].join(","));
-                href = `${newIssueUrl}?template=${tempName}.md&labels=${encodedLabels}`;
-            }
-
-            const item = `<a href=${href}>${tempName}</a>`;
-
-            dropdownContents.innerHTML += item;
-        }
-    } else {
-        for (const tempName of templateNames) {
-            const href = `?quick_pull=1&template=${tempName}.md&labels=${tempName}`;
-            const item = `<a href=${href}>${tempName}</a>`;
-
-            dropdownContents.innerHTML += item;
-        }
-    }
-
-    return dropdownContents;
-}
-
-function _createSaveTokenBtn() {
-    const savebtn = document.createElement("button");
-    savebtn.addEventListener("click", _saveToken);
-    savebtn.innerHTML = chrome.i18n.getMessage("save");
-
-    return savebtn;
-}
-
-function _saveToken() {
-    const tokenKey = `sg-token(${location.host})`;
-    const token = document.getElementById("sg-token").value;
-    chrome.storage.sync.set({[tokenKey]: token}, () => {
-        alert(chrome.i18n.getMessage("tokenSaved"));
-        location.reload();
-    });
-}
-
-function _extractTemplateNames(contents) {
-    let names = [];
-
-    for (const content of contents) {
-        const match = content.name.match(/(.*).md$/i);
-        match && names.push(match[1]);
-    }
-
-    return names;
-}
-
-function _createResetTemplateBtn() {
-    const resetBtn = document.createElement("a");
-    resetBtn.classList.add("btn", "sg-reset-btn");
-    resetBtn.innerHTML = chrome.i18n.getMessage("resetToTemplate");
-    resetBtn.addEventListener("click", _resetIssueBody);
-
-    return resetBtn;
-}
-
-function _resetIssueBody() {
+function _resetIssueHandler() {
     if (!window.confirm(chrome.i18n.getMessage("confirmReset"))) {
         return;
     }
 
-    const templateName = location.search.match(/template=(.*?)\.md/i)[1];
+    const templateName = urlManager.getCurrentTemplate();
     _fetchIssueTemplateFileInfo(templateName).then(result => {
-        const issueBody = document.getElementById("issue_body");
+        const issueBody = dom.getIssueBody();
         // base64 decoding
         const content = _b64DecodeUnicode(result.contents.content);
 
@@ -333,13 +86,11 @@ function _resetIssueBody() {
 }
 
 async function _fetchIssueTemplateFileInfo(name) {
-    const {host, username, reponame} = _getApiInfo();
-    // https://developer.github.com/v3/repos/contents/#get-contents
-    const url = `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE/${name}.md`;
-    const token = await _fetchToken();
-    const response = await _fetch({url, token});
+    const url = urlManager.getFileInfoApiUrl(name);
+    const token = await storage.getToken();
+    const response = await fetcher.fetch({url, token});
 
-    return await _createTemplateData(response);
+    return await dom.createTemplateData(response);
 }
 
 /**
@@ -355,19 +106,4 @@ function _b64DecodeUnicode(str) {
 
 function _convertToSmallBtn(largeBtn) {
     largeBtn.classList.add("sg-small-btn");
-}
-
-function _fetch({url, token}) {
-    const requestInit = {};
-    if (token) {
-        requestInit.headers = {
-            Authorization: `token ${token}`
-        };
-    }
-
-    return new Promise((resolve, reject) => {
-        fetch(url, requestInit)
-            .then(resolve)
-            .catch(reject);
-    });
 }
