@@ -45,7 +45,7 @@ export default {
      * @returns {string} 해당 파일에 접근하기 위한 API URL
      */
     getFileInfoApiUrl: function (fileName) {
-        const {host, username, reponame} = _getApiInfo();
+        const {host, username, reponame} = this._getApiInfo();
 
         return `${host}/repos/${username}/${reponame}/contents/.github/ISSUE_TEMPLATE/${fileName}.md`;
     },
