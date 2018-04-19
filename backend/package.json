@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/ygnoh/smart-github/issues"
   },
-  "homepage": "https://github.com/ygnoh/smart-github#readme"
+  "homepage": "https://github.com/ygnoh/smart-github#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
 }
