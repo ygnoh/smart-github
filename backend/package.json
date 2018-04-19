@@ -1,0 +1,20 @@
+{
+  "name": "smart-github",
+  "version": "1.1.0",
+  "description": "Chrome extension for github",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ygnoh/smart-github.git"
+  },
+  "keywords": [],
+  "author": "Yonggoo Noh <yonggoo.noh@gmail.com> (https://github.com/ygnoh)",
+  "license": "AGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/ygnoh/smart-github/issues"
+  },
+  "homepage": "https://github.com/ygnoh/smart-github#readme"
+}
