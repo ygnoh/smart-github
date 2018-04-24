@@ -15,10 +15,14 @@ app.post("/watch", (req, res, next) => {
     });
 
     req.on("end", () => {
-        const {comment} = JSON.parse(payload);
-        const {html_url, user, body} = comment;
+        try {
+            const {comment} = JSON.parse(payload);
+            const {html_url, user, body} = comment;
 
-        console.log(`${user.login}가 당신의 글(${html_url})에 댓글을 달았습니다:\n${body}`);
+            console.log(`${user.login}가 당신의 글(${html_url})에 댓글을 달았습니다:\n${body}`);
+        } catch (e) {
+            console.error(e);
+        }
     });
 });
 
