@@ -1,9 +1,12 @@
 const express = require("express");
-const firebase = require("@firebase/app").default;
-require("@firebase/messaging");
+const request = require("request");
+const {google} = require("googleapis");
 
 const app = express();
 const PORT = 3000;
+
+let accessToken;
+getAccessToken().then(token => accessToken = token);
 
 app.post("/watch", (req, res, next) => {
     let payload = "";
@@ -23,6 +26,26 @@ app.post("/watch", (req, res, next) => {
             const {html_url, user, body} = comment;
 
             console.log(`${user.login}가 당신의 글(${html_url})에 댓글을 달았습니다:\n${body}`);
+
+            request.post({
+                url: "https://fcm.googleapis.com/v1/projects/smart-github/messages:send",
+                json: true,
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${accessToken}`
+                },
+                body: {
+                    message: {
+                        token: "", // TODO: 타겟 앱 인스턴스 등록 토큰
+                        notification: {
+                            body: "this is body",
+                            title: "this is title"
+                        }
+                    }
+                }
+            }, function(error, incomingMessage, response) {
+                console.log(error);
+            });
         } catch (e) {
             console.error(e);
         }
@@ -31,13 +54,23 @@ app.post("/watch", (req, res, next) => {
 
 app.listen(PORT, () => console.log(`\nStart to listen on port ${PORT}.\n`));
 
-// init firebase
-const config = {
-    apiKey: "AIzaSyD7maFJ1fc_lGPQev9Jiyse53AgtCybpJg",
-    authDomain: "smart-github.firebaseapp.com",
-    databaseURL: "https://smart-github.firebaseio.com",
-    projectId: "smart-github",
-    storageBucket: "smart-github.appspot.com",
-    messagingSenderId: "767779176892"
-};
-firebase.initializeApp(config);
+function getAccessToken() {
+    return new Promise(function (resolve, reject) {
+        // the private key to get an access token
+        const key = require('../firebase-key.json');
+        const jwtClient = new google.auth.JWT(
+            key.client_email,
+            null,
+            key.private_key,
+            ["https://www.googleapis.com/auth/firebase.messaging"],
+            null
+        );
+        jwtClient.authorize(function (err, tokens) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(tokens.access_token);
+        });
+    });
+}
