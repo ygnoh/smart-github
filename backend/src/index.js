@@ -1,4 +1,7 @@
 const express = require("express");
+const firebase = require("@firebase/app").default;
+require("@firebase/messaging");
+
 const app = express();
 const PORT = 3000;
 
@@ -27,3 +30,14 @@ app.post("/watch", (req, res, next) => {
 });
 
 app.listen(PORT, () => console.log(`\nStart to listen on port ${PORT}.\n`));
+
+// init firebase
+const config = {
+    apiKey: "AIzaSyD7maFJ1fc_lGPQev9Jiyse53AgtCybpJg",
+    authDomain: "smart-github.firebaseapp.com",
+    databaseURL: "https://smart-github.firebaseio.com",
+    projectId: "smart-github",
+    storageBucket: "smart-github.appspot.com",
+    messagingSenderId: "767779176892"
+};
+firebase.initializeApp(config);
