@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/ygnoh/smart-github#readme",
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "firebase": "^4.13.1"
   }
 }
