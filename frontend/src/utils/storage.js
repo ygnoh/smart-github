@@ -20,6 +20,17 @@ export default {
         });
     },
     /**
+     * 등록된 유저 이름들을 가져온다.
+     * @returns {Array} 등록된 usernames
+     */
+    getUsernames: function () {
+        return new Promise((resolve, reject) => {
+            this.get("sg-usernames", result => {
+                resolve(result["sg-usernames"] || []);
+            });
+        });
+    },
+    /**
      * 새 host를 추가하고, 페이지를 새로고침한다.
      * @param {string} newHost 새로 추가할 host
      */
@@ -40,6 +51,23 @@ export default {
         });
     },
     /**
+     * 새 username을 추가하고, 페이지를 새로고침한다.
+     * @param {string} newUsername 새로 추가할 username
+     */
+    setUsername: async function (newUsername) {
+        const usernames = await this.getUsernames();
+
+        if (usernames.includes(newUsername)) {
+            return;
+        }
+
+        usernames.push(newUsername);
+
+        this.set({ "sg-usernames": usernames }, () => {
+            location.reload();
+        });
+    },
+    /**
      * 저장된 hosts를 모두 reset하고 페이지를 새로고침한다.
      */
     resetHosts: function () {
@@ -47,6 +75,14 @@ export default {
             chrome.runtime.sendMessage({ name: MESSAGE.HOSTS_UPDATED }, () => {
                 location.reload();
             });
+        });
+    },
+    /**
+     * 저장된 usernames를 모두 reset하고 페이지를 새로고침한다.
+     */
+    resetUsernames: function () {
+        this.remove("sg-usernames", () => {
+            location.reload();
         });
     },
     /**

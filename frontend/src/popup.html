@@ -18,17 +18,37 @@
                     </li>
                 </ul>
             </div>
-            <div class="sg-popup-body">
-                <span class="sg-popup-heading">Your Hosts:</span>
-                <ul class="sg-host-list"></ul>
+            <input type="radio" id="sg-host-button" name="sg-popup-buttons" data-target=".sg-popup-host" checked>
+            <label for="sg-host-button">Host</label>
+            <input type="radio" id="sg-noti-button" name="sg-popup-buttons" data-target=".sg-popup-noti">
+            <label for="sg-noti-button">Noti</label>
+            <div class="sg-popup-body-container sg-popup-host is-on">
+                <div class="sg-popup-body">
+                    <span class="sg-body-header">Your Hosts:</span>
+                    <ul class="sg-host-list"></ul>
+                </div>
+                <div class="sg-popup-footer">
+                    <form class="sg-footer-form">
+                        <input class="sg-footer-input" type="text" placeholder="Enter a host" spellcheck="false" tabindex="1">
+                        <button class="sg-host-save">Save</button>
+                        <button class="sg-host-reset">Reset</button>
+                    </form>
+                </div>
             </div>
-            <div class="sg-popup-footer">
-                <form id="sg-host-form">
-                    <input id="sg-host-input" type="text" placeholder="Enter a host here" spellcheck="false" tabindex="1">
-                    <button id="sg-host-save">Save</button>
-                    <button id="sg-host-reset">Reset</button>
-                </form>
+            <div class="sg-popup-body-container sg-popup-noti">
+                <div class="sg-popup-body">
+                    <span class="sg-body-header">Registered usernames:</span>
+                    <ul class="sg-username-list"></ul>
+                </div>
+                <div class="sg-popup-footer">
+                    <form class="sg-footer-form">
+                        <input class="sg-footer-input" type="text" placeholder="Enter your username" spellcheck="false" tabindex="1">
+                        <button class="sg-username-save">Save</button>
+                        <button class="sg-username-reset">Reset</button>
+                    </form>
+                </div>
             </div>
+            </ul>
         </div>
 
         <script src="popup.bundle.js"></script>
