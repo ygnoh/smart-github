@@ -47,5 +47,7 @@
     "default_locale": "en",
 
     "author": "yonggoo.noh@gmail.com",
-    "homepage_url": "https://github.com/ygnoh/smart-github"
+    "homepage_url": "https://github.com/ygnoh/smart-github",
+
+    "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'"
 }
