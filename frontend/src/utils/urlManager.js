@@ -61,8 +61,10 @@ export default {
      * @returns {string} 새 토큰을 생성하는 페이지 URL
      */
     getNewTokenPageUrl: function () {
+        const scopes = ["repo", "notifications"];
+
         return `${location.protocol}//${location.host}/settings/tokens/new?` +
-            `scopes=repo&description=SmartGithub(${location.host})`;
+            `scopes=${scopes.join(",")}&description=SmartGithub(${location.host})`;
     },
     /**
      * 현재 페이지에 적용된 템플릿의 이름을 알려주는 함수

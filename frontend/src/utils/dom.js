@@ -17,17 +17,29 @@ export default {
     getHostList() {
         return document.querySelector(".sg-host-list");
     },
+    getUsernameList() {
+        return document.querySelector(".sg-username-list");
+    },
+    getPopupBtns() {
+        return document.querySelectorAll("input[type=radio][name='sg-popup-buttons']");
+    },
     getHostSaveBtn() {
-        return document.getElementById("sg-host-save");
+        return document.querySelector(".sg-host-save");
+    },
+    getUsernameSaveBtn() {
+        return document.querySelector(".sg-username-save");
     },
     getHostResetBtn() {
-        return document.getElementById("sg-host-reset");
+        return document.querySelector(".sg-host-reset");
     },
-    getHostInput() {
-        return document.getElementById("sg-host-input");
+    getUsernameResetBtn() {
+        return document.querySelector(".sg-username-reset");
     },
-    getHostForm() {
-        return document.getElementById("sg-host-form");
+    getFooterInput() {
+        return document.querySelector(".is-on .sg-footer-input");
+    },
+    getFooterForm() {
+        return document.querySelector(".is-on .sg-footer-form");
     },
     removeResetTemplateBtns() {
         const bottomArea = this.getIssueBottomArea();

@@ -58,22 +58,31 @@ a {
     color: #0645AD;
 }
 
+/* body container */
+.sg-popup-body-container {
+    display: none;
+}
+
+.sg-popup-body-container.is-on {
+    display: block;
+}
+
 /* body */
 .sg-popup-body {
     font-size: 14px;
     padding: 10px;
 }
 
-.sg-host-list {
+.sg-body-list {
     padding: 10px;
     margin-left: 10px;
 }
 
-.sg-host-list li {
+.sg-body-list li {
     margin-bottom: 5px;
 }
 
-.sg-popup-heading {
+.sg-body-header {
     font-size: 16px;
     font-weight: 500;
 }
@@ -85,7 +94,7 @@ a {
     left: 9.375%;
 }
 
-#sg-host-input {
+.sg-footer-input {
     font-size: 14px;
     width: 150px;
     height: 20px;

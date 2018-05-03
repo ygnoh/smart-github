@@ -4,7 +4,8 @@
   "description": "Chrome extension for github",
   "main": "src/background.js",
   "dependencies": {
-    "babel-runtime": "^6.26.0"
+    "babel-runtime": "^6.26.0",
+    "firebase": "^4.13.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -21,6 +22,7 @@
     "copy": "cp -r src/manifest.json src/popup.html src/_locales src/icons dist-dev/",
     "copy-production": "cp -r src/manifest.json src/popup.html src/_locales src/icons dist/",
     "build": "webpack && npm run copy",
+    "build-watch": "webpack --watch && npm run copy",
     "build-production": "webpack --env.production && npm run copy-production",
     "clean": "rm -r dist-dev/*",
     "clean-production": "rm -r dist/*",

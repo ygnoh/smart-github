@@ -1,4 +1,4 @@
-import {MESSAGE} from "../consts";
+import {FIREBASE, MESSAGE} from "../consts";
 
 /** chrome.storage 관련 작업을 처리하는 객체  */
 export default {
@@ -16,6 +16,17 @@ export default {
                 const hosts = result["sg-hosts"] || [defaultHost];
 
                 resolve(hosts);
+            });
+        });
+    },
+    /**
+     * 등록된 유저 이름들을 가져온다.
+     * @returns {Array} 등록된 usernames
+     */
+    getUsernames: function () {
+        return new Promise((resolve, reject) => {
+            this.get("sg-usernames", result => {
+                resolve(result["sg-usernames"] || []);
             });
         });
     },
@@ -40,6 +51,32 @@ export default {
         });
     },
     /**
+     * 새 username을 추가하고, gcm restration id를 매칭시킨다. 그리고 페이지를 새로고침한다.
+     * @param {string} newUsername 새로 추가할 username
+     */
+    setUsername: async function (newUsername) {
+        const usernames = await this.getUsernames();
+
+        if (usernames.includes(newUsername)) {
+            return;
+        }
+
+        chrome.gcm.register(FIREBASE.SENDER_IDS, registrationId => {
+            /**
+             * TODO: 서버에게 registration id 전달
+             * 어떻게 아이디와 registration id를 매칭 시킬 것인가?
+             * 단순히 매칭해서 저장하면 사칭할 수 있다.
+             */
+            console.log(registrationId);
+        });
+
+        usernames.push(newUsername);
+
+        this.set({ "sg-usernames": usernames }, () => {
+            location.reload();
+        });
+    },
+    /**
      * 저장된 hosts를 모두 reset하고 페이지를 새로고침한다.
      */
     resetHosts: function () {
@@ -47,6 +84,14 @@ export default {
             chrome.runtime.sendMessage({ name: MESSAGE.HOSTS_UPDATED }, () => {
                 location.reload();
             });
+        });
+    },
+    /**
+     * 저장된 usernames를 모두 reset하고 페이지를 새로고침한다.
+     */
+    resetUsernames: function () {
+        this.remove("sg-usernames", () => {
+            location.reload();
         });
     },
     /**

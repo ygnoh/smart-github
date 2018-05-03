@@ -1,3 +1,7 @@
+const FIREBASE = {
+    SERVER_ID: "767779176892"
+};
+
 const MESSAGE = {
     HOSTS_UPDATED: "hosts-updated",
     ISSUE_TAB_LOADED: "issue-tab-loaded",
@@ -8,5 +12,6 @@ const MESSAGE = {
 };
 
 export {
+    FIREBASE,
     MESSAGE
 };
