@@ -1,18 +1,5 @@
-import * as firebase from "firebase/app";
-import "firebase/messaging";
 import {storage} from "./utils";
 import {MESSAGE} from "./consts";
-
-// init Firebase
-const config = {
-    apiKey: "AIzaSyD7maFJ1fc_lGPQev9Jiyse53AgtCybpJg",
-    authDomain: "smart-github.firebaseapp.com",
-    databaseURL: "https://smart-github.firebaseio.com",
-    projectId: "smart-github",
-    storageBucket: "smart-github.appspot.com",
-    messagingSenderId: "767779176892"
-};
-firebase.initializeApp(config);
 
 // default regex that will never match anything
 let rxIssueTab = /(?!)/;
