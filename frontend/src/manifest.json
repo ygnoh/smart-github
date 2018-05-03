@@ -41,7 +41,7 @@
         "tabs",
         "webNavigation",
         "storage",
-        "notifications"
+        "gcm"
     ],
 
     "default_locale": "en",
