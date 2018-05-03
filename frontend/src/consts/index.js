@@ -1,5 +1,5 @@
 const FIREBASE = {
-    SENDER_IDS: ["767779176892"]
+    SERVER_ID: "767779176892"
 };
 
 const MESSAGE = {
